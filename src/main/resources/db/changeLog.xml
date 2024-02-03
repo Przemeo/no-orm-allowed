@@ -1,0 +1,72 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="quarkus" id="1" dbms="postgresql">
+        <createSequence sequenceName="ENTITY_SEQ" incrementBy="50"/>
+
+        <createTable tableName="FIRST_ENTITY">
+            <column name="ID" type="BIGINT">
+                <constraints primaryKey="true"
+                             primaryKeyName="FIRST_ENTITY_PK"
+                             nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createTable tableName="SECOND_ENTITY">
+            <column name="ID" type="BIGINT">
+                <constraints primaryKey="true"
+                             primaryKeyName="SECOND_ENTITY_PK"
+                             nullable="false"/>
+            </column>
+            <column name="FIRST_ENTITY_ID" type="BIGINT">
+                <constraints foreignKeyName="SECOND_ENTITY_FIRST_ENTITY_FK"
+                             referencedTableName="FIRST_ENTITY"
+                             referencedColumnNames="ID"
+                             nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="ADDITIONAL_ATTRIBUTE">
+            <column name="SECOND_ENTITY_ID" type="BIGINT">
+                <constraints primaryKey="true"
+                             primaryKeyName="ADDITIONAL_ATTRIBUTE_PK"
+                             foreignKeyName="ADDITIONAL_ATTRIBUTE_SECOND_ENTITY_FK"
+                             referencedTableName="SECOND_ENTITY"
+                             referencedColumnNames="ID"
+                             nullable="false"/>
+            </column>
+            <column name="ATTRIBUTE_NAME" type="VARCHAR(255)">
+                <constraints primaryKey="true"
+                             primaryKeyName="ADDITIONAL_ATTRIBUTE_PK"
+                             nullable="false"/>
+            </column>
+            <column name="ATTRIBUTE_VALUE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="ANOTHER_ENTITY">
+            <column name="ID" type="BIGINT">
+                <constraints primaryKey="true"
+                             primaryKeyName="ANOTHER_ENTITY_PK"
+                             nullable="false"/>
+            </column>
+            <column name="ANIMAL" type="VARCHAR(255)">
+                <constraints unique="true"
+                             nullable="false"/>
+            </column>
+            <column name="CITY" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_OBSOLETE" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
