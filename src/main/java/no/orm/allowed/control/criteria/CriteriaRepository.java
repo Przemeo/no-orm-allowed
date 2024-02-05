@@ -39,7 +39,8 @@ public class CriteriaRepository implements Repository {
     public List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
                                                                  long skip,
                                                                  long limit) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        Session session = entityManager.unwrap(Session.class);
+        HibernateCriteriaBuilder builder = session.getCriteriaBuilder();
 
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
         Root<AnotherEntity> root = query.from(AnotherEntity.class);
@@ -48,11 +49,12 @@ public class CriteriaRepository implements Repository {
                 .where(builder.like(root.get(AnotherEntity_.animal), animalPrefix + "%"))
                 .orderBy(builder.desc(root.get(AnotherEntity_.isObsolete)), builder.asc(root.get(AnotherEntity_.city)));
 
-        return entityManager.createQuery(query)
+        return session.createQuery(query)
                 .setFirstResult(Long.valueOf(skip).intValue())
                 .setMaxResults(Long.valueOf(limit).intValue())
+                .setTupleTransformer((tuple, aliases) ->
+                        ((Number) tuple[0]).longValue())
                 .getResultStream()
-                .map(tuple -> ((Number) tuple.get(0)).longValue())
                 .collect(Collectors.toList());
     }
 
@@ -88,7 +90,7 @@ public class CriteriaRepository implements Repository {
                 root.join(SecondEntity_.typeAttribute, JoinType.LEFT).get(AdditionalAttribute_.attributeValue),
                 root.join(SecondEntity_.colorAttribute, JoinType.LEFT).get(AdditionalAttribute_.attributeValue));
         query.select(selection)
-                .where(builder.equal(root.get(SecondEntity_.id), secondEntityId));
+                .where(builder.equal(root.get(SecondEntity_.id), builder.literal(secondEntityId)));
 
         return findSingleResult(entityManager.createQuery(query));
     }
@@ -127,12 +129,12 @@ public class CriteriaRepository implements Repository {
                 .getSingleResult();
     }
 
-    //Assume our database can only accept one value in "IN" clause
+    //Assume our database can only accept three values in "IN" clause
     private Predicate getAttributeNamesInPartitionedPredicate(Collection<String> attributeNames,
                                                               Root<AdditionalAttribute> subqueryRoot) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-        return StreamSupport.stream(Iterables.partition(attributeNames, 1).spliterator(), false)
+        return StreamSupport.stream(Iterables.partition(attributeNames, 3).spliterator(), false)
                 .map(names -> subqueryRoot.get(AdditionalAttribute_.key).get(AdditionalAttributeKey_.attributeName).in(names))
                 .collect(Collectors.collectingAndThen(Collectors.toList(),
                         predicates -> builder.or(predicates.toArray(new Predicate[0]))));

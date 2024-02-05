@@ -2,6 +2,7 @@ package no.orm.allowed.control.querydsl;
 
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
@@ -81,7 +82,8 @@ public class QueryDSLSQLRepository implements Repository {
                 .on(typeAttribute.attributeName.eq("type").and(typeAttribute.secondEntityId.eq(SQSecondEntity.secondEntity.id)))
                 .leftJoin(colorAttribute)
                 .on(colorAttribute.attributeName.eq("color").and(colorAttribute.secondEntityId.eq(SQSecondEntity.secondEntity.id)))
-                .where(SQSecondEntity.secondEntity.id.eq(secondEntityId));
+                //Very weird hack to use literal in query
+                .where(SQSecondEntity.secondEntity.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(secondEntityId))));
         return findOne(query);
     }
 
@@ -102,6 +104,7 @@ public class QueryDSLSQLRepository implements Repository {
                 .from(SQLExpressions.select(SQAdditionalAttribute.additionalAttribute.attributeName, SQAdditionalAttribute.additionalAttribute.attributeValue)
                         .distinct()
                         .from(SQAdditionalAttribute.additionalAttribute)
+                        //Not possible to set "IN" query padding
                         .where(getAttributeNamesInPartitionedExpression(attributeNames, SQAdditionalAttribute.additionalAttribute.attributeName)), distinctAttributeNameAttributeValueTableAlias)
                 .fetchOne();
     }
@@ -111,6 +114,7 @@ public class QueryDSLSQLRepository implements Repository {
     public Map<String, Long> getDistinctAttributeValuesCountByAttributeName(@Nonnull Collection<String> attributeNames) {
         return sqlQueryFactory.select(SQAdditionalAttribute.additionalAttribute.attributeName, SQAdditionalAttribute.additionalAttribute.attributeValue.countDistinct())
                 .from(SQAdditionalAttribute.additionalAttribute)
+                //Not possible to set "IN" query padding
                 .where(getAttributeNamesInPartitionedExpression(attributeNames, SQAdditionalAttribute.additionalAttribute.attributeName))
                 .groupBy(SQAdditionalAttribute.additionalAttribute.attributeName)
                 .transform(GroupBy.groupBy(SQAdditionalAttribute.additionalAttribute.attributeName).as(SQAdditionalAttribute.additionalAttribute.attributeValue.countDistinct()));

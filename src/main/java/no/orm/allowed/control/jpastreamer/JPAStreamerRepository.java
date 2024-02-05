@@ -45,7 +45,7 @@ public class JPAStreamerRepository implements Repository {
     @Override
     @Transactional
     public List<String> getDistinctSecondEntityNames(long firstEntityId) {
-        //Not possible to select fields in secondEntities relation
+        //Not possible to select fields from secondEntities relation
         return jpaStreamer.stream(StreamConfiguration.of(FirstEntity.class)
                         .joining(FirstEntity$.secondEntities, JoinType.INNER))
                 .filter(FirstEntity$.id.equal(firstEntityId))
@@ -60,12 +60,14 @@ public class JPAStreamerRepository implements Repository {
     @Override
     @Transactional
     public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
-        //Not possible to select fields in typeAttribute and colorAttribute relations
+        //Not possible to select fields from typeAttribute and colorAttribute relations
         Stream<SecondEntityAttributes> queryStream = jpaStreamer.stream(StreamConfiguration.of(SecondEntity.class)
                         .joining(SecondEntity$.typeAttribute, JoinType.LEFT)
                         .joining(SecondEntity$.colorAttribute, JoinType.LEFT))
+                //Not possible to use literal
                 .filter(SecondEntity$.id.equal(secondEntityId))
                 //Related to the use of findOne method
+                //TODO: how does this work in different Repository classes? Check and set manually if not set
                 .limit(2)
                 //Requires manual mapping of fields - is a good option if we want to have method returning Stream and then mapping to different entities
                 .map(secondEntity -> new SecondEntityAttributes(secondEntity.getName(),
@@ -92,14 +94,14 @@ public class JPAStreamerRepository implements Repository {
 
     @Override
     @Transactional
-    public long getDistinctAttributeValuesCount(Collection<String> attributeNames) {
+    public long getDistinctAttributeValuesCount(@Nonnull Collection<String> attributeNames) {
         //Not yet supported: https://github.com/speedment/jpa-streamer/issues/334
         throw new NotImplementedException("Subqueries not yet supported!");
     }
 
     @Override
     @Transactional
-    public Map<String, Long> getDistinctAttributeValuesCountByAttributeName(Collection<String> attributeNames) {
+    public Map<String, Long> getDistinctAttributeValuesCountByAttributeName(@Nonnull Collection<String> attributeNames) {
         //Not yet supported: https://github.com/speedment/jpa-streamer/issues/208
         throw new NotImplementedException("EmbeddedId not yet supported!");
     }

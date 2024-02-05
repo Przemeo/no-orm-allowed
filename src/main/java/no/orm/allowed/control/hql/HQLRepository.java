@@ -66,8 +66,7 @@ public class HQLRepository implements Repository {
                         "FROM SecondEntity se " +
                         "LEFT OUTER JOIN se.typeAttribute typeAttribute " +
                         "LEFT OUTER JOIN se.colorAttribute colorAttribute " +
-                        "WHERE se.id = (:id)", SecondEntityAttributes.class)
-                .setParameter("id", secondEntityId)
+                        "WHERE se.id = " + secondEntityId, SecondEntityAttributes.class)
                 .uniqueResultOptional();
     }
 

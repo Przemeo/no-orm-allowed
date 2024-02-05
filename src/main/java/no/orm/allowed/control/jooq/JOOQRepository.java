@@ -58,7 +58,7 @@ public class JOOQRepository implements Repository {
                 .from(FirstEntity.FIRST_ENTITY)
                 .innerJoin(SecondEntity.SECOND_ENTITY)
                 .on(SecondEntity.SECOND_ENTITY.FIRST_ENTITY_ID.eq(FirstEntity.FIRST_ENTITY.ID))
-                .where(FirstEntity.FIRST_ENTITY.ID.eq(firstEntityId))
+                .where(FirstEntity.FIRST_ENTITY.ID.eq(DSL.inline(firstEntityId)))
                 .fetch(SecondEntity.SECOND_ENTITY.NAME);
     }
 
@@ -94,9 +94,9 @@ public class JOOQRepository implements Repository {
                 .fetchOne(DSL.count(), Long.class);
     }
 
-    //Assume our database can only accept one value in "IN" clause
+    //Assume our database can only accept three values in "IN" clause
     private static Condition getAttributeNamesInPartitionedPredicate(Collection<String> attributeNames) {
-        return StreamSupport.stream(Iterables.partition(attributeNames, 1).spliterator(), false)
+        return StreamSupport.stream(Iterables.partition(attributeNames, 3).spliterator(), false)
                 .map(AdditionalAttribute.ADDITIONAL_ATTRIBUTE.ATTRIBUTE_NAME::in)
                 .collect(Collectors.collectingAndThen(Collectors.toList(), DSL::or));
     }

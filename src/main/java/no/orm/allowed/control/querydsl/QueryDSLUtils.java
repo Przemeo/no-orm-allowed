@@ -15,9 +15,10 @@ class QueryDSLUtils {
 
     private QueryDSLUtils() {}
 
+    //Assume our database can only accept three values in "IN" clause
     static BooleanExpression getAttributeNamesInPartitionedExpression(Collection<String> attributeNames,
                                                                       StringPath attributeNamePath) {
-        return StreamSupport.stream(Iterables.partition(attributeNames, 1).spliterator(), false)
+        return StreamSupport.stream(Iterables.partition(attributeNames, 3).spliterator(), false)
                 .map(attributeNamePath::in)
                 .collect(Collectors.collectingAndThen(Collectors.toList(),
                         expressions -> {
@@ -28,7 +29,7 @@ class QueryDSLUtils {
                                 return Expressions.predicate(Ops.OR, expressions.toArray(new Expression[0]));
                             }
                             //Using Expressions.FALSE fails test for Blaze because of parsing exception
-                            return Expressions.stringTemplate("1").ne(Expressions.stringTemplate("1"));
+                            return Expressions.numberTemplate(Long.class, String.valueOf(1L)).ne(Expressions.numberTemplate(Long.class,String.valueOf(1L)));
                         }));
     }
 

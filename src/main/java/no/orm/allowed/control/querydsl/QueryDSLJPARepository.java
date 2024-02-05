@@ -4,6 +4,7 @@ import com.blazebit.persistence.querydsl.BlazeJPAQueryFactory;
 import com.blazebit.persistence.querydsl.JPQLNextExpressions;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.annotation.Nonnull;
@@ -79,7 +80,8 @@ public class QueryDSLJPARepository implements Repository {
                 .from(QSecondEntity.secondEntity)
                 .leftJoin(QSecondEntity.secondEntity.typeAttribute)
                 .leftJoin(QSecondEntity.secondEntity.colorAttribute)
-                .where(QSecondEntity.secondEntity.id.eq(secondEntityId));
+                //Very weird hack to use literal in query
+                .where(QSecondEntity.secondEntity.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(secondEntityId))));
         return findOne(query);
     }
 

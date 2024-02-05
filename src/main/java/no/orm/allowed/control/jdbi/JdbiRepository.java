@@ -65,8 +65,7 @@ public class JdbiRepository implements Repository {
                             "ON typeAttribute.ATTRIBUTE_NAME = 'type' AND typeAttribute.SECOND_ENTITY_ID = SECOND_ENTITY.ID " +
                             "LEFT OUTER JOIN ADDITIONAL_ATTRIBUTE colorAttribute " +
                             "ON colorAttribute.ATTRIBUTE_NAME = 'color' AND colorAttribute.SECOND_ENTITY_ID = SECOND_ENTITY.ID " +
-                            "WHERE SECOND_ENTITY.ID = (:id)")
-                    .bind("id", secondEntityId)
+                            "WHERE SECOND_ENTITY.ID = " + secondEntityId)
                     .mapTo(SecondEntityAttributes.class)
                     .findOne();
         });

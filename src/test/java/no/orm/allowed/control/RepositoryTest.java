@@ -107,7 +107,7 @@ public abstract class RepositoryTest {
 
     private static Stream<Arguments> getAttributeNamesWithCorrectCount() {
         return Stream.of(
-                Arguments.of(Set.of("type", "color"), 5L),
+                Arguments.of(Set.of("type", "color", "taste", "look"), 5L),
                 Arguments.of(Collections.singleton("type"), 2L),
                 Arguments.of(Collections.singleton("color"), 3L),
                 Arguments.of(Collections.emptySet(), 0L)

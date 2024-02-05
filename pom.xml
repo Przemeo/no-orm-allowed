@@ -9,17 +9,19 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
         <quarkus.package.type>uber-jar</quarkus.package.type>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.platform.version>3.6.6</quarkus.platform.version>
+        <quarkus.platform.version>3.6.9</quarkus.platform.version>
 
         <surefire-plugin.version>3.2.5</surefire-plugin.version>
         <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
         <liquibase-maven-plugin.version>4.25.1</liquibase-maven-plugin.version>
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <testcontainers-jooq-codegen-maven-plugin.version>0.0.3</testcontainers-jooq-codegen-maven-plugin.version>
@@ -28,11 +30,13 @@
         <db.username>admin</db.username>
         <db.password>admin</db.password>
 
+        <hibernate.version>6.2.19.Final</hibernate.version>
         <jooq.version>3.19.3</jooq.version>
         <jdbi.version>3.44.0</jdbi.version>
         <querydsl.version>6.0.1</querydsl.version>
         <blaze-persistence.version>1.6.11</blaze-persistence.version>
         <quarkus-jpastreamer.version>3.0.3.Final</quarkus-jpastreamer.version>
+        <jpastreamer.version>3.0.4</jpastreamer.version>
 
         <testcontainers.version>1.19.1</testcontainers.version>
         <guava.version>33.0.0-jre</guava.version>
@@ -75,16 +79,10 @@
             <artifactId>quarkus-hibernate-orm</artifactId>
         </dependency>
 
-        <!--Generate JPAStreamer metamodel from JPA/Hibernate annotations-->
         <dependency>
             <groupId>io.quarkiverse.jpastreamer</groupId>
             <artifactId>quarkus-jpastreamer</artifactId>
             <version>${quarkus-jpastreamer.version}</version>
-        </dependency>
-        <!--Generate Hibernate metamodel-->
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
         </dependency>
 
         <dependency>
@@ -179,6 +177,28 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <!--Generate Hibernate metamodel-->
+                        <path>
+                            <groupId>org.hibernate.orm</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <!--To remove after Quarkus 3.7.1 -->
+                            <version>${hibernate.version}</version>
+                        </path>
+                        <!--Generate JPAStreamer metamodel from JPA/Hibernate annotations-->
+                        <path>
+                            <groupId>com.speedment.jpastreamer</groupId>
+                            <artifactId>fieldgenerator-standard</artifactId>
+                            <version>${jpastreamer.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

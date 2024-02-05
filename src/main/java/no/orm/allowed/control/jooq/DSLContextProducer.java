@@ -25,6 +25,8 @@ class DSLContextProducer {
                 .withRenderSchema(false)
                 .withRenderCatalog(false)
                 .withRenderFormatted(true)
+                .withInListPadding(true)
+                .withInListPadBase(2)
                 .withRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED);
     }
 
