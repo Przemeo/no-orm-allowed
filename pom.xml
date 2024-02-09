@@ -41,6 +41,8 @@
         <testcontainers.version>1.19.1</testcontainers.version>
         <guava.version>33.0.0-jre</guava.version>
         <postgresql.version>42.7.1</postgresql.version>
+        <p6spy.version>3.9.1</p6spy.version>
+        <database-rider.version>1.41.0</database-rider.version>
         <assertj.version>3.25.2</assertj.version>
     </properties>
 
@@ -147,6 +149,20 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>${p6spy.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.database-rider</groupId>
+            <artifactId>rider-cdi</artifactId>
+            <version>${database-rider.version}</version>
+            <classifier>jakarta</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

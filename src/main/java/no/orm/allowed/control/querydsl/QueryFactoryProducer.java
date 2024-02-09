@@ -21,6 +21,8 @@ class QueryFactoryProducer {
     SQLQueryFactory getSQLQueryFactory(AgroalDataSource dataSource) {
         SQLTemplates templates = new PostgreSQLTemplates();
         Configuration configuration = new Configuration(templates);
+        //Enable to use literals everywhere instead of binding parameters
+        //configuration.setUseLiterals(true);
 
         return new SQLQueryFactory(configuration, dataSource);
     }
@@ -33,8 +35,8 @@ class QueryFactoryProducer {
     @ApplicationScoped
     BlazeJPAQueryFactory getBlazeJPAQueryFactory(EntityManagerFactory entityManagerFactory,
                                                  EntityManager entityManager) {
-        CriteriaBuilderConfiguration config = Criteria.getDefault();
-        CriteriaBuilderFactory criteriaBuilderFactory = config.createCriteriaBuilderFactory(entityManagerFactory);
+        CriteriaBuilderConfiguration configuration = Criteria.getDefault();
+        CriteriaBuilderFactory criteriaBuilderFactory = configuration.createCriteriaBuilderFactory(entityManagerFactory);
 
         return new BlazeJPAQueryFactory(entityManager, criteriaBuilderFactory);
     }

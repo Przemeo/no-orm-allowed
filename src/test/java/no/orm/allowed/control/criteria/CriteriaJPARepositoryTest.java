@@ -4,9 +4,9 @@ import io.quarkus.test.junit.QuarkusTest;
 import no.orm.allowed.control.RepositoryTest;
 
 @QuarkusTest
-class CriteriaRepositoryTest extends RepositoryTest {
+class CriteriaJPARepositoryTest extends RepositoryTest {
 
-    CriteriaRepositoryTest(CriteriaRepository repository) {
+    CriteriaJPARepositoryTest(CriteriaJPARepository repository) {
         super(repository);
     }
 

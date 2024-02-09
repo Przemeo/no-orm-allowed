@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class HQLRepository implements Repository {
 
+    private static final int LIMIT_VALUE = 2;
+
     private final EntityManager entityManager;
 
     HQLRepository(EntityManager entityManager) {
@@ -67,6 +69,8 @@ public class HQLRepository implements Repository {
                         "LEFT OUTER JOIN se.typeAttribute typeAttribute " +
                         "LEFT OUTER JOIN se.colorAttribute colorAttribute " +
                         "WHERE se.id = " + secondEntityId, SecondEntityAttributes.class)
+                //Limit related to the use of uniqueResultOptional method
+                .setMaxResults(LIMIT_VALUE)
                 .uniqueResultOptional();
     }
 

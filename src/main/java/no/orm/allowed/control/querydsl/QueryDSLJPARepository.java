@@ -3,7 +3,6 @@ package no.orm.allowed.control.querydsl;
 import com.blazebit.persistence.querydsl.BlazeJPAQueryFactory;
 import com.blazebit.persistence.querydsl.JPQLNextExpressions;
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -27,6 +26,8 @@ import static no.orm.allowed.control.querydsl.QueryDSLUtils.getAttributeNamesInP
 
 @ApplicationScoped
 public class QueryDSLJPARepository implements Repository {
+
+    private static final int LIMIT_VALUE = 2;
 
     private final EntityManager entityManager;
     private final JPAQueryFactory jpaQueryFactory;
@@ -76,12 +77,16 @@ public class QueryDSLJPARepository implements Repository {
     @Transactional
     public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
         JPAQuery<SecondEntityAttributes> query = jpaQueryFactory.select(
-                        Projections.constructor(SecondEntityAttributes.class, QSecondEntity.secondEntity.name, QSecondEntity.secondEntity.typeAttribute.attributeValue, QSecondEntity.secondEntity.colorAttribute.attributeValue))
+                        //Projections.constructor(SecondEntityAttributes.class, QSecondEntity.secondEntity.name, QSecondEntity.secondEntity.typeAttribute.attributeValue, QSecondEntity.secondEntity.colorAttribute.attributeValue)
+                        new QSecondEntityAttributes(QSecondEntity.secondEntity.name, QSecondEntity.secondEntity.typeAttribute.attributeValue, QSecondEntity.secondEntity.colorAttribute.attributeValue)
+                )
                 .from(QSecondEntity.secondEntity)
                 .leftJoin(QSecondEntity.secondEntity.typeAttribute)
                 .leftJoin(QSecondEntity.secondEntity.colorAttribute)
                 //Very weird hack to use literal in query
-                .where(QSecondEntity.secondEntity.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(secondEntityId))));
+                .where(QSecondEntity.secondEntity.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(secondEntityId))))
+                //Limit related to the use of fetchOne method
+                .limit(LIMIT_VALUE);
         return findOne(query);
     }
 
@@ -100,7 +105,7 @@ public class QueryDSLJPARepository implements Repository {
                                 JPQLNextExpressions.bind(QAdditionalAttributeCTE.additionalAttributeCTE.attributeValue, QAdditionalAttribute.additionalAttribute.attributeValue))
                         .distinct()
                         .from(QAdditionalAttribute.additionalAttribute)
-                        .where(getAttributeNamesInPartitionedExpression(attributeNames, QAdditionalAttribute.additionalAttribute.key.attributeName)))
+                        .where(getAttributeNamesInPartitionedExpression(attributeNames, QAdditionalAttribute.additionalAttribute.key.attributeName, false)))
                 .select(QAdditionalAttributeCTE.additionalAttributeCTE.attributeName.count())
                 .from(QAdditionalAttributeCTE.additionalAttributeCTE)
                 .fetchOne();
@@ -111,7 +116,7 @@ public class QueryDSLJPARepository implements Repository {
     public Map<String, Long> getDistinctAttributeValuesCountByAttributeName(@Nonnull Collection<String> attributeNames) {
         return jpaQueryFactory.select(QAdditionalAttribute.additionalAttribute.key.attributeName, QAdditionalAttribute.additionalAttribute.attributeValue.countDistinct())
                 .from(QAdditionalAttribute.additionalAttribute)
-                .where(getAttributeNamesInPartitionedExpression(attributeNames, QAdditionalAttribute.additionalAttribute.key.attributeName))
+                .where(getAttributeNamesInPartitionedExpression(attributeNames, QAdditionalAttribute.additionalAttribute.key.attributeName, false))
                 .groupBy(QAdditionalAttribute.additionalAttribute.key.attributeName)
                 .transform(GroupBy.groupBy(QAdditionalAttribute.additionalAttribute.key.attributeName)
                         .as(QAdditionalAttribute.additionalAttribute.attributeValue.countDistinct()));

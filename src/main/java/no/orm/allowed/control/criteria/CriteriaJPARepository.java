@@ -22,7 +22,9 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @ApplicationScoped
-public class CriteriaRepository implements Repository {
+public class CriteriaJPARepository implements Repository {
+
+    private static final int LIMIT_VALUE = 2;
 
     private static final String ATTRIBUTE_NAME_ALIAS = "attributeName";
     private static final String ATTRIBUTE_VALUE_ALIAS = "attributeValue";
@@ -30,7 +32,7 @@ public class CriteriaRepository implements Repository {
 
     private final EntityManager entityManager;
 
-    CriteriaRepository(EntityManager entityManager) {
+    CriteriaJPARepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -99,7 +101,9 @@ public class CriteriaRepository implements Repository {
     //uniqueResultOptional from Hibernate can also be used
     private static <T> Optional<T> findSingleResult(TypedQuery<T> query) {
         try {
-            return Optional.of(query.getSingleResult());
+            //Limit related to the use of getSingleResult method
+            return Optional.of(query.setMaxResults(LIMIT_VALUE)
+                    .getSingleResult());
         } catch (NoResultException noResultException) {
             return Optional.empty();
         }

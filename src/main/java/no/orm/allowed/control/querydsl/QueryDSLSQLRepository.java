@@ -1,7 +1,7 @@
 package no.orm.allowed.control.querydsl;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.sql.SQLExpressions;
@@ -11,6 +11,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import no.orm.allowed.control.Repository;
+import no.orm.allowed.entity.jpa.QSecondEntityAttributes;
 import no.orm.allowed.entity.jpa.SecondEntityAttributes;
 import no.orm.allowed.entity.sql.SQAdditionalAttribute;
 import no.orm.allowed.entity.sql.SQAnotherEntity;
@@ -28,6 +29,10 @@ import static no.orm.allowed.control.querydsl.QueryDSLUtils.getAttributeNamesInP
 @ApplicationScoped
 public class QueryDSLSQLRepository implements Repository {
 
+    private static final String TYPE_ATTRIBUTE_ALIAS = "typeAttribute";
+    private static final String COLOR_ATTRIBUTE_ALIAS = "colorAttribute";
+    private static final String TYPE_ATTRIBUTE_NAME = "type";
+    private static final String COLOR_ATTRIBUTE_NAME = "color";
     private static final String DISTINCT_ATTRIBUTE_NAME_ATTRIBUTE_VALUE_TABLE_ALIAS = "distinctAttributeNameAttributeValue";
 
     private final SQLQueryFactory sqlQueryFactory;
@@ -72,16 +77,18 @@ public class QueryDSLSQLRepository implements Repository {
     @Override
     @Transactional
     public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
-        SQAdditionalAttribute typeAttribute = new SQAdditionalAttribute("typeAttribute");
-        SQAdditionalAttribute colorAttribute = new SQAdditionalAttribute("colorAttribute");
+        SQAdditionalAttribute typeAttribute = new SQAdditionalAttribute(TYPE_ATTRIBUTE_ALIAS);
+        SQAdditionalAttribute colorAttribute = new SQAdditionalAttribute(COLOR_ATTRIBUTE_ALIAS);
 
         SQLQuery<SecondEntityAttributes> query = sqlQueryFactory.select(
-                    Projections.constructor(SecondEntityAttributes.class, SQSecondEntity.secondEntity.name, typeAttribute.attributeValue, colorAttribute.attributeValue))
+                    //Projections.constructor(SecondEntityAttributes.class, SQSecondEntity.secondEntity.name, typeAttribute.attributeValue, colorAttribute.attributeValue)
+                    new QSecondEntityAttributes(SQSecondEntity.secondEntity.name, typeAttribute.attributeValue, colorAttribute.attributeValue)
+                )
                 .from(SQSecondEntity.secondEntity)
                 .leftJoin(typeAttribute)
-                .on(typeAttribute.attributeName.eq("type").and(typeAttribute.secondEntityId.eq(SQSecondEntity.secondEntity.id)))
+                .on(typeAttribute.attributeName.eq(TYPE_ATTRIBUTE_NAME).and(typeAttribute.secondEntityId.eq(SQSecondEntity.secondEntity.id)))
                 .leftJoin(colorAttribute)
-                .on(colorAttribute.attributeName.eq("color").and(colorAttribute.secondEntityId.eq(SQSecondEntity.secondEntity.id)))
+                .on(colorAttribute.attributeName.eq(COLOR_ATTRIBUTE_NAME).and(colorAttribute.secondEntityId.eq(SQSecondEntity.secondEntity.id)))
                 //Very weird hack to use literal in query
                 .where(SQSecondEntity.secondEntity.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(secondEntityId))));
         return findOne(query);
@@ -89,7 +96,7 @@ public class QueryDSLSQLRepository implements Repository {
 
     //Workaround: findOne is not available in QueryDSL
     private static <T> Optional<T> findOne(SQLQuery<T> query) {
-        //fetchOne adds "LIMIT 2" to the query
+        //fetchOne adds "LIMIT 2" to the query - only QueryDSL SQL does this implicitly
         return Optional.ofNullable(query.fetchOne());
     }
 
@@ -98,14 +105,14 @@ public class QueryDSLSQLRepository implements Repository {
     //Unboxing may produce NullPointerException
     @SuppressWarnings("ConstantConditions")
     public long getDistinctAttributeValuesCount(@Nonnull Collection<String> attributeNames) {
-        PathBuilder<String> distinctAttributeNameAttributeValueTableAlias = new PathBuilder<>(String.class, DISTINCT_ATTRIBUTE_NAME_ATTRIBUTE_VALUE_TABLE_ALIAS);
+        PathBuilder<Tuple> distinctAttributeNameAttributeValueTableAlias = new PathBuilder<>(Tuple.class, DISTINCT_ATTRIBUTE_NAME_ATTRIBUTE_VALUE_TABLE_ALIAS);
 
         return sqlQueryFactory.select(distinctAttributeNameAttributeValueTableAlias.get(SQAdditionalAttribute.additionalAttribute.attributeName).count())
                 .from(SQLExpressions.select(SQAdditionalAttribute.additionalAttribute.attributeName, SQAdditionalAttribute.additionalAttribute.attributeValue)
                         .distinct()
                         .from(SQAdditionalAttribute.additionalAttribute)
                         //Not possible to set "IN" query padding
-                        .where(getAttributeNamesInPartitionedExpression(attributeNames, SQAdditionalAttribute.additionalAttribute.attributeName)), distinctAttributeNameAttributeValueTableAlias)
+                        .where(getAttributeNamesInPartitionedExpression(attributeNames, SQAdditionalAttribute.additionalAttribute.attributeName, true)), distinctAttributeNameAttributeValueTableAlias)
                 .fetchOne();
     }
 
@@ -115,7 +122,7 @@ public class QueryDSLSQLRepository implements Repository {
         return sqlQueryFactory.select(SQAdditionalAttribute.additionalAttribute.attributeName, SQAdditionalAttribute.additionalAttribute.attributeValue.countDistinct())
                 .from(SQAdditionalAttribute.additionalAttribute)
                 //Not possible to set "IN" query padding
-                .where(getAttributeNamesInPartitionedExpression(attributeNames, SQAdditionalAttribute.additionalAttribute.attributeName))
+                .where(getAttributeNamesInPartitionedExpression(attributeNames, SQAdditionalAttribute.additionalAttribute.attributeName, true))
                 .groupBy(SQAdditionalAttribute.additionalAttribute.attributeName)
                 .transform(GroupBy.groupBy(SQAdditionalAttribute.additionalAttribute.attributeName).as(SQAdditionalAttribute.additionalAttribute.attributeValue.countDistinct()));
     }

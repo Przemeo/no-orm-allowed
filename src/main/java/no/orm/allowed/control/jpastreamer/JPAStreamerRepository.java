@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class JPAStreamerRepository implements Repository {
 
+    private static final int LIMIT_VALUE = 2;
+
     private final JPAStreamer jpaStreamer;
 
     JPAStreamerRepository(JPAStreamer jpaStreamer) {
@@ -66,9 +68,8 @@ public class JPAStreamerRepository implements Repository {
                         .joining(SecondEntity$.colorAttribute, JoinType.LEFT))
                 //Not possible to use literal
                 .filter(SecondEntity$.id.equal(secondEntityId))
-                //Related to the use of findOne method
-                //TODO: how does this work in different Repository classes? Check and set manually if not set
-                .limit(2)
+                //Limit related to the use of findOne method
+                .limit(LIMIT_VALUE)
                 //Requires manual mapping of fields - is a good option if we want to have method returning Stream and then mapping to different entities
                 .map(secondEntity -> new SecondEntityAttributes(secondEntity.getName(),
                         Optional.ofNullable(secondEntity.getTypeAttribute())
@@ -80,8 +81,7 @@ public class JPAStreamerRepository implements Repository {
         return findOne(queryStream);
     }
 
-    //We have to rely on the Stream class methods, so there is no HQL uniqueResultOptional equivalent
-    //May return more than one result
+    //We have to rely on the Stream class methods, so more than one result may be returned
     private static <T> Optional<T> findOne(Stream<T> stream) {
         List<T> results = stream.toList();
 

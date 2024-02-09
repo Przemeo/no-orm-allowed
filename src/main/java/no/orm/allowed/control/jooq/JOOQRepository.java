@@ -25,6 +25,8 @@ import java.util.stream.StreamSupport;
 @ApplicationScoped
 public class JOOQRepository implements Repository {
 
+    private static final int LIMIT_VALUE = 2;
+
     private static final String TYPE_ATTRIBUTE_ALIAS = "typeAttribute";
     private static final String COLOR_ATTRIBUTE_ALIAS = "colorAttribute";
     private static final String TYPE_ATTRIBUTE_NAME = "type";
@@ -75,6 +77,8 @@ public class JOOQRepository implements Repository {
                 .leftJoin(colorAttribute)
                 .on(colorAttribute.ATTRIBUTE_NAME.eq(COLOR_ATTRIBUTE_NAME).and(colorAttribute.SECOND_ENTITY_ID.eq(SecondEntity.SECOND_ENTITY.ID)))
                 .where(SecondEntity.SECOND_ENTITY.ID.eq(secondEntityId))
+                //Limit related to the use of fetchOptionalInto method
+                .limit(LIMIT_VALUE)
                 .fetchOptionalInto(SecondEntityAttributes.class);
     }
 

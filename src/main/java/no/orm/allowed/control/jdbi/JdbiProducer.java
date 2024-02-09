@@ -10,7 +10,6 @@ class JdbiProducer {
 
     @ApplicationScoped
     Jdbi getJdbi(AgroalDataSource dataSource) {
-        //Can be configured from application.properties with use of a config file
         Jdbi jdbi = Jdbi.create(dataSource);
         jdbi.installPlugin(new SqlObjectPlugin());
         jdbi.setSqlLogger(new Slf4JSqlLogger());

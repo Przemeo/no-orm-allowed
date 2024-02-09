@@ -1,0 +1,55 @@
+FIRST_ENTITY:
+  - DESCRIPTION: "TestDescription1" #1
+  - DESCRIPTION: "TestDescription2" #51
+
+SECOND_ENTITY:
+  - FIRST_ENTITY_ID: 1 #101
+    NAME: "TestValue1"
+  - FIRST_ENTITY_ID: 1 #151
+    NAME: "TestValue2"
+  - FIRST_ENTITY_ID: 1 #201
+    NAME: "TestValue2"
+  - FIRST_ENTITY_ID: 51 #251
+    NAME: "TestValue1"
+  - FIRST_ENTITY_ID: 51 #301
+    NAME: "TestValue4"
+
+ADDITIONAL_ATTRIBUTE:
+  - SECOND_ENTITY_ID: 101
+    ATTRIBUTE_NAME: "type"
+    ATTRIBUTE_VALUE: "Type1"
+  - SECOND_ENTITY_ID: 101
+    ATTRIBUTE_NAME: "color"
+    ATTRIBUTE_VALUE: "Red"
+  - SECOND_ENTITY_ID: 151
+    ATTRIBUTE_NAME: "color"
+    ATTRIBUTE_VALUE: "Blue"
+  - SECOND_ENTITY_ID: 201
+    ATTRIBUTE_NAME: "color"
+    ATTRIBUTE_VALUE: "Blue"
+  - SECOND_ENTITY_ID: 251
+    ATTRIBUTE_NAME: "type"
+    ATTRIBUTE_VALUE: "Type2"
+  - SECOND_ENTITY_ID: 251
+    ATTRIBUTE_NAME: "color"
+    ATTRIBUTE_VALUE: "Yellow"
+  - SECOND_ENTITY_ID: 301
+    ATTRIBUTE_NAME: "type"
+    ATTRIBUTE_VALUE: "Type1"
+
+ANOTHER_ENTITY:
+  - ANIMAL: "Duck"
+    CITY: "Warsaw"
+    IS_OBSOLETE: true
+  - ANIMAL: "Goat"
+    CITY: "Warsaw"
+  - ANIMAL: "Cat"
+    CITY: "Kiev"
+    IS_OBSOLETE: true
+  - ANIMAL: "Dolphin"
+    CITY: "Chicago"
+    IS_OBSOLETE: false
+  - ANIMAL: "Dog"
+    CITY: "Paris"
+  - ANIMAL: "Donkey"
+    CITY: "Berlin"
