@@ -40,7 +40,7 @@
 
         <testcontainers.version>1.19.1</testcontainers.version>
         <guava.version>33.0.0-jre</guava.version>
-        <postgresql.version>42.7.1</postgresql.version>
+        <postgresql.version>42.7.2</postgresql.version>
         <p6spy.version>3.9.1</p6spy.version>
         <database-rider.version>1.41.0</database-rider.version>
         <assertj.version>3.25.2</assertj.version>
