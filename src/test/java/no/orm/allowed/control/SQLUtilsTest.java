@@ -1,6 +1,5 @@
-package no.orm.allowed.control.querydsl;
+package no.orm.allowed.control;
 
-import no.orm.allowed.control.SQLUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,7 +11,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class QueryDSLUtilsTest {
+class SQLUtilsTest {
 
     @ParameterizedTest
     @MethodSource("getValuesWithExpectedPaddedValues")
