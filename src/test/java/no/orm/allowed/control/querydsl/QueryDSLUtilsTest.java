@@ -1,5 +1,6 @@
 package no.orm.allowed.control.querydsl;
 
+import no.orm.allowed.control.SQLUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,7 +19,7 @@ class QueryDSLUtilsTest {
     @DisplayName("When values are padded then return list with proper elements")
     void test1(List<String> values,
                List<String> expectedPaddedValues) {
-        List<String> paddedValues = QueryDSLUtils.getPaddedValues(values);
+        List<String> paddedValues = SQLUtils.getPaddedValues(values);
 
         assertThat(paddedValues)
                 .hasSize(expectedPaddedValues.size())

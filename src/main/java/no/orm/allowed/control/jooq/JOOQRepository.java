@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-//quarkus-jooq exists: https://github.com/quarkiverse/quarkus-jooq
 @ApplicationScoped
 public class JOOQRepository implements Repository {
 

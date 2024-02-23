@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 
 //Better than pure JDBC
-//quarkus-jdbi exists: https://github.com/quarkiverse/quarkus-jdbi
 @ApplicationScoped
 public class JdbiRepository implements Repository {
 

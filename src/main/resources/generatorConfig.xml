@@ -1,0 +1,19 @@
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="dsql" targetRuntime="MyBatis3DynamicSql">
+        <jdbcConnection driverClass="org.postgresql.Driver"
+                        connectionURL="${db.url}"
+                        userId="${db.username}"
+                        password="${db.password}"/>
+
+        <javaModelGenerator targetPackage="no.orm.allowed.mybatis.model" targetProject="MAVEN"/>
+        <javaClientGenerator targetPackage="no.orm.allowed.mybatis.mapper" targetProject="MAVEN"/>
+
+        <table schema="public" tableName="first_entity"/>
+        <table schema="public" tableName="second_entity"/>
+        <table schema="public" tableName="additional_attribute"/>
+        <table schema="public" tableName="another_entity"/>
+    </context>
+</generatorConfiguration>
