@@ -11,11 +11,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "FIRST_ENTITY")
-@NamedQuery(name = FirstEntity.GET_DISTINCT_SECOND_ENTITY_NAMES_QUERY,
+@NamedQuery(name = "#getDistinctSecondEntityNames",
         query = "SELECT DISTINCT se.name FROM FirstEntity fe INNER JOIN fe.secondEntities se WHERE fe.id = (:id)")
 public class FirstEntity extends DatabaseId {
-
-    public static final String GET_DISTINCT_SECOND_ENTITY_NAMES_QUERY = "getDistinctSecondEntityNames";
 
     @OneToMany(mappedBy = SecondEntity_.FIRST_ENTITY)
     private Set<SecondEntity> secondEntities = new LinkedHashSet<>();

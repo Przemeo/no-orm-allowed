@@ -6,7 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import no.orm.allowed.control.Repository;
-import no.orm.allowed.entity.jpa.FirstEntity;
+import no.orm.allowed.entity.jpa.FirstEntity_;
 import no.orm.allowed.entity.jpa.SecondEntityAttributes;
 import org.hibernate.Session;
 
@@ -54,9 +54,7 @@ public class HQLRepository implements Repository {
         Session session = entityManager.unwrap(Session.class);
 
         //Can also be written as: SELECT DISTINCT se.name FROM FirstEntity fe INNER JOIN SecondEntity se ON fk(se.firstEntity) = fe.id WHERE fe.id = (:id)
-        return session.createNamedQuery(FirstEntity.GET_DISTINCT_SECOND_ENTITY_NAMES_QUERY, String.class)
-                .setParameter("id", firstEntityId)
-                .list();
+        return FirstEntity_.getDistinctSecondEntityNames(session, firstEntityId);
     }
 
     @Override
