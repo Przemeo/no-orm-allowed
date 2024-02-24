@@ -34,6 +34,7 @@ public class JOOQRepository implements Repository {
 
     private final DSLContext dslContext;
 
+    @SuppressWarnings("CdiInjectionPointsInspection")
     JOOQRepository(DSLContext dslContext) {
         this.dslContext = dslContext;
     }

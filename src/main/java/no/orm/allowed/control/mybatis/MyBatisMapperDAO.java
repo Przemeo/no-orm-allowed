@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Mapper
-public interface MyBatisMapperDAO extends CommonSelectMapper, CommonCountMapper {
+interface MyBatisMapperDAO extends CommonSelectMapper, CommonCountMapper {
 
     @SelectProvider(type = MyBatisStatementProvider.class, method = "getIsObsoleteAndCitySortedAnotherEntityIds")
     @Result(column = "ID")
