@@ -19,7 +19,9 @@ class QueryFactoryProducer {
 
     @Singleton
     SQLQueryFactory getSQLQueryFactory(AgroalDataSource dataSource) {
-        SQLTemplates templates = new PostgreSQLTemplates();
+        SQLTemplates templates = PostgreSQLTemplates.builder()
+                .printSchema()
+                .build();
         Configuration configuration = new Configuration(templates);
         //Enable to use literals everywhere instead of binding parameters
         //configuration.setUseLiterals(true);

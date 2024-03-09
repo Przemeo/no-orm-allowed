@@ -33,7 +33,7 @@ interface MyBatisMapperDAO extends CommonSelectMapper, CommonCountMapper {
                                                           long limit);
 
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
-    @Results(id = "SecondEntityAttributes", value= {
+    @Results(id = "SecondEntityAttributes", value = {
             @Result(column = "NAME", property = "name", jdbcType= JdbcType.VARCHAR),
             @Result(column = "typeAttributeValue", property = "type", jdbcType = JdbcType.VARCHAR),
             @Result(column = "colorAttributeValue", property = "color", jdbcType = JdbcType.VARCHAR),
