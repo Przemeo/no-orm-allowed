@@ -20,17 +20,16 @@ public class SQLUtils {
     public static <T> List<T> getPaddedValues(Collection<T> values) {
         int valuesSize = values.size();
         int valuesSizeNextPowerOf2 = nextPowerOf2(valuesSize);
+        List<T> paddedValues = new LinkedList<>(values);
 
         if (valuesSize == valuesSizeNextPowerOf2) {
-            return new LinkedList<>(values);
+            return paddedValues;
         }
 
-        List<T> paddedValues = new LinkedList<>(values);
+        T lastValue = Iterables.getLast(values);
         for (int i = 0; i < valuesSizeNextPowerOf2 - valuesSize; i++) {
-            T lastValue = Iterables.getLast(values);
             paddedValues.add(lastValue);
         }
-
         return paddedValues;
     }
 
