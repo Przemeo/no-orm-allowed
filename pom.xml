@@ -41,7 +41,7 @@
         <mybatis-dynamic-sql.version>1.5.0</mybatis-dynamic-sql.version>
 
         <testcontainers.version>1.19.1</testcontainers.version>
-        <guava.version>33.0.0-jre</guava.version>
+        <guava.version>33.1.0-jre</guava.version>
         <postgresql.version>42.7.2</postgresql.version>
         <p6spy.version>3.9.1</p6spy.version>
         <database-rider.version>1.42.0</database-rider.version>
