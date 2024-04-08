@@ -37,7 +37,7 @@
         <jdbi.version>3.45.1</jdbi.version>
         <querydsl.version>6.1</querydsl.version>
         <blaze-persistence.version>1.6.11</blaze-persistence.version>
-        <quarkus-mybatis.version>2.2.1</quarkus-mybatis.version>
+        <quarkus-mybatis.version>2.2.2</quarkus-mybatis.version>
         <mybatis-dynamic-sql.version>1.5.0</mybatis-dynamic-sql.version>
 
         <testcontainers.version>1.19.1</testcontainers.version>
