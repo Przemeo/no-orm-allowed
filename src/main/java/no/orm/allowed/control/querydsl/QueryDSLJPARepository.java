@@ -43,48 +43,48 @@ public class QueryDSLJPARepository implements Repository {
 
     @Override
     @Transactional
-    public List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
-                                                                 long skip,
-                                                                 long limit) {
-        return jpaQueryFactory.select(QAnotherEntity.anotherEntity.id, QAnotherEntity.anotherEntity.isObsolete, QAnotherEntity.anotherEntity.city)
+    public List<Long> getIsDangerousAndNatureSortedAnimalIds(@Nonnull String namePrefix,
+                                                             long skip,
+                                                             long limit) {
+        return jpaQueryFactory.select(QAnimal.animal.id, QAnimal.animal.isDangerous, QAnimal.animal.nature)
                 .distinct()
-                .from(QAnotherEntity.anotherEntity)
-                .where(QAnotherEntity.anotherEntity.animal.startsWith(animalPrefix))
-                .orderBy(QAnotherEntity.anotherEntity.isObsolete.desc(), QAnotherEntity.anotherEntity.city.asc())
+                .from(QAnimal.animal)
+                .where(QAnimal.animal.name.startsWith(namePrefix))
+                .orderBy(QAnimal.animal.isDangerous.desc(), QAnimal.animal.nature.asc())
                 .offset(skip)
                 .limit(limit)
                 .stream()
-                .map(tuple -> tuple.get(QAnotherEntity.anotherEntity.id))
+                .map(tuple -> tuple.get(QAnimal.animal.id))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public List<String> getDistinctSecondEntityNames(long firstEntityId) {
-        EntityGraph<FirstEntity> entityGraph = entityManager.createEntityGraph(FirstEntity.class);
-        entityGraph.addSubgraph(FirstEntity_.secondEntities);
+    public List<String> getDistinctWorkerDescriptions(long companyId) {
+        EntityGraph<Company> entityGraph = entityManager.createEntityGraph(Company.class);
+        entityGraph.addSubgraph(Company_.workers);
 
-        return jpaQueryFactory.select(QSecondEntity.secondEntity.name)
+        return jpaQueryFactory.select(QWorker.worker.description)
                 .distinct()
-                .from(QFirstEntity.firstEntity)
-                .innerJoin(QFirstEntity.firstEntity.secondEntities, QSecondEntity.secondEntity)
-                .where(QFirstEntity.firstEntity.id.eq(firstEntityId))
+                .from(QCompany.company)
+                .innerJoin(QCompany.company.workers, QWorker.worker)
+                .where(QCompany.company.id.eq(companyId))
                 .setHint(GraphSemantic.FETCH.getJakartaHintName(), entityGraph)
                 .fetch();
     }
 
     @Override
     @Transactional
-    public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
-        JPAQuery<SecondEntityAttributes> query = jpaQueryFactory.select(
-                        //Projections.constructor(SecondEntityAttributes.class, QSecondEntity.secondEntity.name, QSecondEntity.secondEntity.typeAttribute.attributeValue, QSecondEntity.secondEntity.colorAttribute.attributeValue)
-                        new QSecondEntityAttributes(QSecondEntity.secondEntity.name, QSecondEntity.secondEntity.typeAttribute.attributeValue, QSecondEntity.secondEntity.colorAttribute.attributeValue)
+    public Optional<WorkerAttributes> getWorkerAttributes(long workerId) {
+        JPAQuery<WorkerAttributes> query = jpaQueryFactory.select(
+                        //Projections.constructor(WorkerAttributes.class, QWorkerAttributes.worker.description, QWorker.worker.nameAttribute.attributeValue, QWorker.worker.favouriteColorAttribute.attributeValue)
+                        new QWorkerAttributes(QWorker.worker.description, QWorker.worker.nameAttribute.attributeValue, QWorker.worker.favouriteColorAttribute.attributeValue)
                 )
-                .from(QSecondEntity.secondEntity)
-                .leftJoin(QSecondEntity.secondEntity.typeAttribute)
-                .leftJoin(QSecondEntity.secondEntity.colorAttribute)
+                .from(QWorker.worker)
+                .leftJoin(QWorker.worker.nameAttribute)
+                .leftJoin(QWorker.worker.favouriteColorAttribute)
                 //Very weird hack to use literal in query
-                .where(QSecondEntity.secondEntity.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(secondEntityId))))
+                .where(QWorker.worker.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(workerId))))
                 //Limit related to the use of fetchOne method
                 .limit(LIMIT_VALUE);
         return findOne(query);

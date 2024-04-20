@@ -1,6 +1,6 @@
 package no.orm.allowed.control;
 
-import no.orm.allowed.entity.jpa.SecondEntityAttributes;
+import no.orm.allowed.entity.jpa.WorkerAttributes;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,13 +9,13 @@ import java.util.Optional;
 
 public interface Repository {
 
-    List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(String animalPrefix,
-                                                          long skip,
-                                                          long limit);
+    List<Long> getIsDangerousAndNatureSortedAnimalIds(String namePrefix,
+                                                      long skip,
+                                                      long limit);
 
-    List<String> getDistinctSecondEntityNames(long firstEntityId);
+    List<String> getDistinctWorkerDescriptions(long companyId);
 
-    Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId);
+    Optional<WorkerAttributes> getWorkerAttributes(long workerId);
 
     long getDistinctAttributeValuesCount(Collection<String> attributeNames);
 

@@ -4,7 +4,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import no.orm.allowed.control.Repository;
-import no.orm.allowed.entity.jpa.SecondEntityAttributes;
+import no.orm.allowed.entity.jpa.WorkerAttributes;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.generic.GenericType;
 import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
@@ -27,19 +27,19 @@ public class JdbiRepository implements Repository {
 
     @Override
     @Transactional
-    public List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
-                                                                 long skip,
-                                                                 long limit) {
-        String appendedAnimalPrefix = animalPrefix + "%";
+    public List<Long> getIsDangerousAndNatureSortedAnimalIds(@Nonnull String namePrefix,
+                                                             long skip,
+                                                             long limit) {
+        String appendedNamePrefix = namePrefix + "%";
 
         return jdbi.withHandle(handle ->
-                handle.createQuery("SELECT ANOTHER_ENTITY.ID, ANOTHER_ENTITY.IS_OBSOLETE, ANOTHER_ENTITY.CITY " +
-                                "FROM ANOTHER_ENTITY " +
-                                "WHERE ANOTHER_ENTITY.ANIMAL LIKE :animalPrefix " +
-                                "ORDER BY ANOTHER_ENTITY.IS_OBSOLETE DESC, ANOTHER_ENTITY.CITY " +
+                handle.createQuery("SELECT ANIMAL.ID, ANIMAL.IS_DANGEROUS, ANIMAL.NATURE " +
+                                "FROM ANIMAL " +
+                                "WHERE ANIMAL.NAME LIKE :namePrefix " +
+                                "ORDER BY ANIMAL.IS_DANGEROUS DESC, ANIMAL.NATURE " +
                                 "OFFSET :skip " +
                                 "FETCH FIRST :limit ROWS ONLY")
-                        .bind("animalPrefix", appendedAnimalPrefix)
+                        .bind("namePrefix", appendedNamePrefix)
                         .bind("skip", skip)
                         .bind("limit", limit)
                         .map(result -> result.getColumn("ID", Long.class))
@@ -49,25 +49,25 @@ public class JdbiRepository implements Repository {
 
     @Override
     @Transactional
-    public List<String> getDistinctSecondEntityNames(long firstEntityId) {
-        return jdbi.withExtension(JdbiDAO.class, dao -> dao.getDistinctSecondEntityNames(firstEntityId));
+    public List<String> getDistinctWorkerDescriptions(long companyId) {
+        return jdbi.withExtension(JdbiDAO.class, dao -> dao.getDistinctWorkerDescriptions(companyId));
     }
 
     @Override
     @Transactional
-    public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
+    public Optional<WorkerAttributes> getWorkerAttributes(long workerId) {
         return jdbi.withHandle(handle -> {
-            handle.registerRowMapper(ConstructorMapper.factory(SecondEntityAttributes.class));
-            return handle.createQuery("SELECT SECOND_ENTITY.NAME, typeAttribute.ATTRIBUTE_VALUE typeAttributeValue, colorAttribute.ATTRIBUTE_VALUE colorAttributeValue " +
-                            "FROM SECOND_ENTITY " +
-                            "LEFT OUTER JOIN ADDITIONAL_ATTRIBUTE typeAttribute " +
-                            "ON typeAttribute.ATTRIBUTE_NAME = 'type' AND typeAttribute.SECOND_ENTITY_ID = SECOND_ENTITY.ID " +
-                            "LEFT OUTER JOIN ADDITIONAL_ATTRIBUTE colorAttribute " +
-                            "ON colorAttribute.ATTRIBUTE_NAME = 'color' AND colorAttribute.SECOND_ENTITY_ID = SECOND_ENTITY.ID " +
-                            "WHERE SECOND_ENTITY.ID = " + secondEntityId + " " +
+            handle.registerRowMapper(ConstructorMapper.factory(WorkerAttributes.class));
+            return handle.createQuery("SELECT WORKER.DESCRIPTION, nameAttribute.ATTRIBUTE_VALUE nameAttributeValue, favouriteColorAttribute.ATTRIBUTE_VALUE favouriteColorAttributeValue " +
+                            "FROM WORKER " +
+                            "LEFT OUTER JOIN ADDITIONAL_ATTRIBUTE nameAttribute " +
+                            "ON nameAttribute.ATTRIBUTE_NAME = 'name' AND nameAttribute.WORKER_ID = WORKER.ID " +
+                            "LEFT OUTER JOIN ADDITIONAL_ATTRIBUTE favouriteColorAttribute " +
+                            "ON favouriteColorAttribute.ATTRIBUTE_NAME = 'favouriteColor' AND favouriteColorAttribute.WORKER_ID = WORKER.ID " +
+                            "WHERE WORKER.ID = " + workerId + " " +
                             //Limit related to the use of findOne method
                             "FETCH FIRST 2 ROWS ONLY")
-                    .mapTo(SecondEntityAttributes.class)
+                    .mapTo(WorkerAttributes.class)
                     .findOne();
         });
     }

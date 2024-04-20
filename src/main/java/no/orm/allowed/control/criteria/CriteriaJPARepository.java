@@ -38,18 +38,18 @@ public class CriteriaJPARepository implements Repository {
 
     @Override
     @Transactional
-    public List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
-                                                                 long skip,
-                                                                 long limit) {
+    public List<Long> getIsDangerousAndNatureSortedAnimalIds(@Nonnull String namePrefix,
+                                                             long skip,
+                                                             long limit) {
         Session session = entityManager.unwrap(Session.class);
         HibernateCriteriaBuilder builder = session.getCriteriaBuilder();
 
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
-        Root<AnotherEntity> root = query.from(AnotherEntity.class);
+        Root<Animal> root = query.from(Animal.class);
 
-        query.multiselect(root.get(AnotherEntity_.id), root.get(AnotherEntity_.isObsolete), root.get(AnotherEntity_.city))
-                .where(builder.like(root.get(AnotherEntity_.animal), animalPrefix + "%"))
-                .orderBy(builder.desc(root.get(AnotherEntity_.isObsolete)), builder.asc(root.get(AnotherEntity_.city)));
+        query.multiselect(root.get(Animal_.id), root.get(Animal_.isDangerous), root.get(Animal_.nature))
+                .where(builder.like(root.get(Animal_.name), namePrefix + "%"))
+                .orderBy(builder.desc(root.get(Animal_.isDangerous)), builder.asc(root.get(Animal_.nature)));
 
         return session.createQuery(query)
                 .setFirstResult(Long.valueOf(skip).intValue())
@@ -62,16 +62,16 @@ public class CriteriaJPARepository implements Repository {
 
     @Override
     @Transactional
-    public List<String> getDistinctSecondEntityNames(long firstEntityId) {
+    public List<String> getDistinctWorkerDescriptions(long companyId) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        EntityGraph<FirstEntity> entityGraph = entityManager.createEntityGraph(FirstEntity.class);
-        entityGraph.addSubgraph(FirstEntity_.secondEntities);
+        EntityGraph<Company> entityGraph = entityManager.createEntityGraph(Company.class);
+        entityGraph.addSubgraph(Company_.workers);
 
         CriteriaQuery<String> query = builder.createQuery(String.class);
-        Root<FirstEntity> root = query.from(FirstEntity.class);
+        Root<Company> root = query.from(Company.class);
 
-        query.select(root.join(FirstEntity_.secondEntities, JoinType.INNER).get(SecondEntity_.name))
-                .where(builder.equal(root.get(FirstEntity_.id), firstEntityId))
+        query.select(root.join(Company_.workers, JoinType.INNER).get(Worker_.description))
+                .where(builder.equal(root.get(Company_.id), companyId))
                 .distinct(true);
 
         return entityManager.createQuery(query)
@@ -81,18 +81,18 @@ public class CriteriaJPARepository implements Repository {
 
     @Override
     @Transactional
-    public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
+    public Optional<WorkerAttributes> getWorkerAttributes(long workerId) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-        CriteriaQuery<SecondEntityAttributes> query = builder.createQuery(SecondEntityAttributes.class);
-        Root<SecondEntity> root = query.from(SecondEntity.class);
+        CriteriaQuery<WorkerAttributes> query = builder.createQuery(WorkerAttributes.class);
+        Root<Worker> root = query.from(Worker.class);
 
-        Selection<SecondEntityAttributes> selection = builder.construct(SecondEntityAttributes.class,
-                root.get(SecondEntity_.name),
-                root.join(SecondEntity_.typeAttribute, JoinType.LEFT).get(AdditionalAttribute_.attributeValue),
-                root.join(SecondEntity_.colorAttribute, JoinType.LEFT).get(AdditionalAttribute_.attributeValue));
+        Selection<WorkerAttributes> selection = builder.construct(WorkerAttributes.class,
+                root.get(Worker_.description),
+                root.join(Worker_.nameAttribute, JoinType.LEFT).get(AdditionalAttribute_.attributeValue),
+                root.join(Worker_.favouriteColorAttribute, JoinType.LEFT).get(AdditionalAttribute_.attributeValue));
         query.select(selection)
-                .where(builder.equal(root.get(SecondEntity_.id), builder.literal(secondEntityId)));
+                .where(builder.equal(root.get(Worker_.id), builder.literal(workerId)));
 
         return findSingleResult(entityManager.createQuery(query));
     }

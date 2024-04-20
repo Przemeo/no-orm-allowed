@@ -7,38 +7,41 @@
     <changeSet author="quarkus" id="1" dbms="postgresql">
         <createSequence sequenceName="ENTITY_SEQ" incrementBy="50"/>
 
-        <createTable tableName="FIRST_ENTITY">
+        <createTable tableName="COMPANY">
             <column name="ID" type="BIGINT" defaultValueSequenceNext="ENTITY_SEQ">
                 <constraints primaryKey="true"
-                             primaryKeyName="FIRST_ENTITY_PK"
-                             nullable="false"/>
-            </column>
-            <column name="DESCRIPTION" type="VARCHAR(255)"/>
-        </createTable>
-
-        <createTable tableName="SECOND_ENTITY">
-            <column name="ID" type="BIGINT" defaultValueSequenceNext="ENTITY_SEQ">
-                <constraints primaryKey="true"
-                             primaryKeyName="SECOND_ENTITY_PK"
-                             nullable="false"/>
-            </column>
-            <column name="FIRST_ENTITY_ID" type="BIGINT">
-                <constraints foreignKeyName="SECOND_ENTITY_FIRST_ENTITY_FK"
-                             referencedTableName="FIRST_ENTITY"
-                             referencedColumnNames="ID"
+                             primaryKeyName="COMPANY_PK"
                              nullable="false"/>
             </column>
             <column name="NAME" type="VARCHAR(255)">
+                <constraints unique="true"
+                             nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="WORKER">
+            <column name="ID" type="BIGINT" defaultValueSequenceNext="ENTITY_SEQ">
+                <constraints primaryKey="true"
+                             primaryKeyName="WORKER_PK"
+                             nullable="false"/>
+            </column>
+            <column name="COMPANY_ID" type="BIGINT">
+                <constraints foreignKeyName="WORKER_COMPANY_FK"
+                             referencedTableName="COMPANY"
+                             referencedColumnNames="ID"
+                             nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
         <createTable tableName="ADDITIONAL_ATTRIBUTE">
-            <column name="SECOND_ENTITY_ID" type="BIGINT">
+            <column name="WORKER_ID" type="BIGINT">
                 <constraints primaryKey="true"
                              primaryKeyName="ADDITIONAL_ATTRIBUTE_PK"
-                             foreignKeyName="ADDITIONAL_ATTRIBUTE_SECOND_ENTITY_FK"
-                             referencedTableName="SECOND_ENTITY"
+                             foreignKeyName="ADDITIONAL_ATTRIBUTE_WORKER_FK"
+                             referencedTableName="WORKER"
                              referencedColumnNames="ID"
                              nullable="false"/>
             </column>
@@ -52,20 +55,20 @@
             </column>
         </createTable>
 
-        <createTable tableName="ANOTHER_ENTITY">
+        <createTable tableName="ANIMAL">
             <column name="ID" type="BIGINT" defaultValueSequenceNext="ENTITY_SEQ">
                 <constraints primaryKey="true"
-                             primaryKeyName="ANOTHER_ENTITY_PK"
+                             primaryKeyName="ANIMAL_PK"
                              nullable="false"/>
             </column>
-            <column name="ANIMAL" type="VARCHAR(255)">
+            <column name="NAME" type="VARCHAR(255)">
                 <constraints unique="true"
                              nullable="false"/>
             </column>
-            <column name="CITY" type="VARCHAR(255)">
+            <column name="NATURE" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="IS_OBSOLETE" type="BOOLEAN"/>
+            <column name="IS_DANGEROUS" type="BOOLEAN"/>
         </createTable>
     </changeSet>
 

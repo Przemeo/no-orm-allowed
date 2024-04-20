@@ -4,10 +4,10 @@ import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import no.orm.allowed.control.Repository;
-import no.orm.allowed.entity.jpa.SecondEntityAttributes;
+import no.orm.allowed.entity.jpa.WorkerAttributes;
 import no.orm.allowed.mybatis.mapper.AdditionalAttributeDynamicSqlSupport;
-import no.orm.allowed.mybatis.mapper.FirstEntityDynamicSqlSupport;
-import no.orm.allowed.mybatis.mapper.SecondEntityDynamicSqlSupport;
+import no.orm.allowed.mybatis.mapper.CompanyDynamicSqlSupport;
+import no.orm.allowed.mybatis.mapper.WorkerDynamicSqlSupport;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
 import org.mybatis.dynamic.sql.Constant;
@@ -30,22 +30,22 @@ public class MyBatisRepository implements Repository {
 
     @Override
     @Transactional
-    public List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
-                                                                 long skip,
-                                                                 long limit) {
-        String appendedAnimalPrefix = animalPrefix + "%";
+    public List<Long> getIsDangerousAndNatureSortedAnimalIds(@Nonnull String namePrefix,
+                                                             long skip,
+                                                             long limit) {
+        String appendedNamePrefix = namePrefix + "%";
 
-        return myBatisMapperDAO.getIsObsoleteAndCitySortedAnotherEntityIds(appendedAnimalPrefix, skip, limit);
+        return myBatisMapperDAO.getIsDangerousAndNatureSortedAnimalIds(appendedNamePrefix, skip, limit);
     }
 
     @Override
     @Transactional
-    public List<String> getDistinctSecondEntityNames(long firstEntityId) {
-        SelectStatementProvider selectStatement = SqlBuilder.selectDistinct(SecondEntityDynamicSqlSupport.name)
-                .from(FirstEntityDynamicSqlSupport.firstEntity)
-                .join(SecondEntityDynamicSqlSupport.secondEntity)
-                .on(SecondEntityDynamicSqlSupport.firstEntityId, SqlBuilder.equalTo(FirstEntityDynamicSqlSupport.id))
-                .where(FirstEntityDynamicSqlSupport.id, SqlBuilder.isEqualTo(firstEntityId))
+    public List<String> getDistinctWorkerDescriptions(long companyId) {
+        SelectStatementProvider selectStatement = SqlBuilder.selectDistinct(WorkerDynamicSqlSupport.description)
+                .from(CompanyDynamicSqlSupport.company)
+                .join(WorkerDynamicSqlSupport.worker)
+                .on(WorkerDynamicSqlSupport.companyId, SqlBuilder.equalTo(CompanyDynamicSqlSupport.id))
+                .where(CompanyDynamicSqlSupport.id, SqlBuilder.isEqualTo(companyId))
                 .build()
                 .render(RenderingStrategies.MYBATIS3);
 
@@ -54,9 +54,9 @@ public class MyBatisRepository implements Repository {
 
     @Override
     @Transactional
-    public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
+    public Optional<WorkerAttributes> getWorkerAttributes(long workerId) {
         return myBatisMapperDAO.selectOne(c ->
-                c.where(SecondEntityDynamicSqlSupport.id, SqlBuilder.isEqualTo(Constant.of(String.valueOf(secondEntityId))))
+                c.where(WorkerDynamicSqlSupport.id, SqlBuilder.isEqualTo(Constant.of(String.valueOf(workerId))))
                         .fetchFirst(2L)
                         .rowsOnly());
     }

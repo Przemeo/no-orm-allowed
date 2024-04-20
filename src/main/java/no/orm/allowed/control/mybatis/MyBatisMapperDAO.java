@@ -1,9 +1,9 @@
 package no.orm.allowed.control.mybatis;
 
 import jakarta.annotation.Nonnull;
-import no.orm.allowed.entity.jpa.SecondEntityAttributes;
+import no.orm.allowed.entity.jpa.WorkerAttributes;
 import no.orm.allowed.mybatis.mapper.AdditionalAttributeDynamicSqlSupport;
-import no.orm.allowed.mybatis.mapper.SecondEntityDynamicSqlSupport;
+import no.orm.allowed.mybatis.mapper.WorkerDynamicSqlSupport;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.session.ResultHandler;
@@ -26,31 +26,36 @@ import java.util.Optional;
 @Mapper
 interface MyBatisMapperDAO extends CommonSelectMapper, CommonCountMapper {
 
-    @SelectProvider(type = MyBatisStatementProvider.class, method = "getIsObsoleteAndCitySortedAnotherEntityIds")
+    String NAME_ATTRIBUTE_VALUE = "nameAttributeValue";
+    String FAVOURITE_COLOR_ATTRIBUTE_VALUE = "favouriteColorAttributeValue";
+    String NAME_ATTRIBUTE_NAME = "name";
+    String FAVOURITE_COLOR_ATTRIBUTE_NAME = "favouriteColor";
+
+    @SelectProvider(type = MyBatisStatementProvider.class, method = "getIsDangerousAndNatureSortedAnimalIds")
     @Result(column = "ID")
-    List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
-                                                          long skip,
-                                                          long limit);
+    List<Long> getIsDangerousAndNatureSortedAnimalIds(@Nonnull String namePrefix,
+                                                      long skip,
+                                                      long limit);
 
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
-    @Results(id = "SecondEntityAttributes", value = {
-            @Result(column = "NAME", property = "name", jdbcType= JdbcType.VARCHAR),
-            @Result(column = "typeAttributeValue", property = "type", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "colorAttributeValue", property = "color", jdbcType = JdbcType.VARCHAR),
+    @Results(id = "WorkerAttributes", value = {
+            @Result(column = "DESCRIPTION", property = "description", jdbcType= JdbcType.VARCHAR),
+            @Result(column = NAME_ATTRIBUTE_VALUE, property = NAME_ATTRIBUTE_NAME, jdbcType = JdbcType.VARCHAR),
+            @Result(column = FAVOURITE_COLOR_ATTRIBUTE_VALUE, property = FAVOURITE_COLOR_ATTRIBUTE_NAME, jdbcType = JdbcType.VARCHAR),
     })
-    Optional<SecondEntityAttributes> selectOne(SelectStatementProvider selectStatement);
+    Optional<WorkerAttributes> selectOne(SelectStatementProvider selectStatement);
 
-    default Optional<SecondEntityAttributes> selectOne(SelectDSLCompleter completer) {
-        AdditionalAttributeDynamicSqlSupport.AdditionalAttribute typeAttribute = AdditionalAttributeDynamicSqlSupport.additionalAttribute.withAlias("typeAttribute");
-        AdditionalAttributeDynamicSqlSupport.AdditionalAttribute colorAttribute = AdditionalAttributeDynamicSqlSupport.additionalAttribute.withAlias("colorAttribute");
+    default Optional<WorkerAttributes> selectOne(SelectDSLCompleter completer) {
+        AdditionalAttributeDynamicSqlSupport.AdditionalAttribute nameAttribute = AdditionalAttributeDynamicSqlSupport.additionalAttribute.withAlias("nameAttribute");
+        AdditionalAttributeDynamicSqlSupport.AdditionalAttribute favouriteColorAttribute = AdditionalAttributeDynamicSqlSupport.additionalAttribute.withAlias("favouriteColorAttribute");
 
-        QueryExpressionDSL<SelectModel> start = SqlBuilder.select(SecondEntityDynamicSqlSupport.name,
-                        typeAttribute.attributeValue.as("typeAttributeValue"), colorAttribute.attributeValue.as("colorAttributeValue"))
-                .from(SecondEntityDynamicSqlSupport.secondEntity)
-                .leftJoin(typeAttribute, SqlBuilder.on(typeAttribute.attributeName, SqlBuilder.equalTo(StringConstant.of("type"))),
-                        SqlBuilder.and(typeAttribute.secondEntityId, SqlBuilder.equalTo(SecondEntityDynamicSqlSupport.id)))
-                .leftJoin(colorAttribute, SqlBuilder.on(colorAttribute.attributeName, SqlBuilder.equalTo(StringConstant.of("color"))),
-                        SqlBuilder.and(colorAttribute.secondEntityId, SqlBuilder.equalTo(SecondEntityDynamicSqlSupport.id)));
+        QueryExpressionDSL<SelectModel> start = SqlBuilder.select(WorkerDynamicSqlSupport.description,
+                        nameAttribute.attributeValue.as(NAME_ATTRIBUTE_VALUE), favouriteColorAttribute.attributeValue.as(FAVOURITE_COLOR_ATTRIBUTE_VALUE))
+                .from(WorkerDynamicSqlSupport.worker)
+                .leftJoin(nameAttribute, SqlBuilder.on(nameAttribute.attributeName, SqlBuilder.equalTo(StringConstant.of(NAME_ATTRIBUTE_NAME))),
+                        SqlBuilder.and(nameAttribute.workerId, SqlBuilder.equalTo(WorkerDynamicSqlSupport.id)))
+                .leftJoin(favouriteColorAttribute, SqlBuilder.on(favouriteColorAttribute.attributeName, SqlBuilder.equalTo(StringConstant.of(FAVOURITE_COLOR_ATTRIBUTE_NAME))),
+                        SqlBuilder.and(favouriteColorAttribute.workerId, SqlBuilder.equalTo(WorkerDynamicSqlSupport.id)));
 
         return MyBatis3Utils.selectOne(this::selectOne, start, completer);
     }
@@ -62,11 +67,11 @@ interface MyBatisMapperDAO extends CommonSelectMapper, CommonCountMapper {
     class MyBatisStatementProvider {
 
         @SuppressWarnings("unused")
-        public String getIsObsoleteAndCitySortedAnotherEntityIds(final Map<String, Object> params) {
-            return new SQL().SELECT("ANOTHER_ENTITY.ID", "ANOTHER_ENTITY.IS_OBSOLETE", "ANOTHER_ENTITY.CITY")
-                    .FROM("ANOTHER_ENTITY")
-                    .WHERE("ANOTHER_ENTITY.ANIMAL LIKE #{animalPrefix}")
-                    .ORDER_BY("ANOTHER_ENTITY.IS_OBSOLETE DESC", "ANOTHER_ENTITY.CITY")
+        public String getIsDangerousAndNatureSortedAnimalIds(final Map<String, Object> params) {
+            return new SQL().SELECT("ANIMAL.ID", "ANIMAL.IS_DANGEROUS", "ANIMAL.NATURE")
+                    .FROM("ANIMAL")
+                    .WHERE("ANIMAL.NAME LIKE #{namePrefix}")
+                    .ORDER_BY("ANIMAL.IS_DANGEROUS DESC", "ANIMAL.NATURE")
                     .OFFSET("#{skip}")
                     .FETCH_FIRST_ROWS_ONLY("#{limit}")
                     .toString();

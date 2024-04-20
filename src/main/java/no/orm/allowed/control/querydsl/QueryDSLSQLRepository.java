@@ -11,12 +11,12 @@ import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import no.orm.allowed.control.Repository;
-import no.orm.allowed.entity.jpa.QSecondEntityAttributes;
-import no.orm.allowed.entity.jpa.SecondEntityAttributes;
+import no.orm.allowed.entity.jpa.QWorkerAttributes;
+import no.orm.allowed.entity.jpa.WorkerAttributes;
 import no.orm.allowed.entity.sql.SQAdditionalAttribute;
-import no.orm.allowed.entity.sql.SQAnotherEntity;
-import no.orm.allowed.entity.sql.SQFirstEntity;
-import no.orm.allowed.entity.sql.SQSecondEntity;
+import no.orm.allowed.entity.sql.SQAnimal;
+import no.orm.allowed.entity.sql.SQCompany;
+import no.orm.allowed.entity.sql.SQWorker;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,10 +29,10 @@ import static no.orm.allowed.control.querydsl.QueryDSLUtils.getAttributeNamesInP
 @ApplicationScoped
 public class QueryDSLSQLRepository implements Repository {
 
-    private static final String TYPE_ATTRIBUTE_ALIAS = "typeAttribute";
-    private static final String COLOR_ATTRIBUTE_ALIAS = "colorAttribute";
-    private static final String TYPE_ATTRIBUTE_NAME = "type";
-    private static final String COLOR_ATTRIBUTE_NAME = "color";
+    private static final String NAME_ATTRIBUTE_ALIAS = "nameAttribute";
+    private static final String FAVOURITE_COLOR_ATTRIBUTE_ALIAS = "favouriteColorAttribute";
+    private static final String NAME_ATTRIBUTE_NAME = "name";
+    private static final String FAVOURITE_COLOR_ATTRIBUTE_NAME = "favouriteColor";
     private static final String DISTINCT_ATTRIBUTE_NAME_ATTRIBUTE_VALUE_TABLE_ALIAS = "distinctAttributeNameAttributeValue";
 
     private final SQLQueryFactory sqlQueryFactory;
@@ -43,54 +43,54 @@ public class QueryDSLSQLRepository implements Repository {
 
     @Override
     @Transactional
-    public List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
-                                                                 long skip,
-                                                                 long limit) {
-        return sqlQueryFactory.select(SQAnotherEntity.anotherEntity.id, SQAnotherEntity.anotherEntity.isObsolete, SQAnotherEntity.anotherEntity.city)
+    public List<Long> getIsDangerousAndNatureSortedAnimalIds(@Nonnull String namePrefix,
+                                                             long skip,
+                                                             long limit) {
+        return sqlQueryFactory.select(SQAnimal.animal.id, SQAnimal.animal.isDangerous, SQAnimal.animal.nature)
                 .distinct()
-                .from(SQAnotherEntity.anotherEntity)
-                .where(SQAnotherEntity.anotherEntity.animal.startsWith(animalPrefix))
-                .orderBy(SQAnotherEntity.anotherEntity.isObsolete.desc(), SQAnotherEntity.anotherEntity.city.asc())
+                .from(SQAnimal.animal)
+                .where(SQAnimal.animal.name.startsWith(namePrefix))
+                .orderBy(SQAnimal.animal.isDangerous.desc(), SQAnimal.animal.nature.asc())
                 .offset(skip)
                 .limit(limit)
                 //Required because of "JDBC resources leaked: 1 ResultSet(s) and 1 Statement(s)" warning
                 .fetch()
                 .stream()
-                .map(tuple -> tuple.get(SQAnotherEntity.anotherEntity.id))
+                .map(tuple -> tuple.get(SQAnimal.animal.id))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public List<String> getDistinctSecondEntityNames(long firstEntityId) {
-        return sqlQueryFactory.select(SQSecondEntity.secondEntity.name)
+    public List<String> getDistinctWorkerDescriptions(long companyId) {
+        return sqlQueryFactory.select(SQWorker.worker.description)
                 .distinct()
-                .from(SQFirstEntity.firstEntity)
-                .innerJoin(SQFirstEntity.firstEntity._secondEntityFirstEntityFk, SQSecondEntity.secondEntity)
+                .from(SQCompany.company)
+                .innerJoin(SQCompany.company._workerCompanyFk, SQWorker.worker)
                 //Can also be written like:
-                //.innerJoin(SQSecondEntity.secondEntity)
-                //.on(SQSecondEntity.secondEntity.firstEntityId.eq(SQFirstEntity.firstEntity.id))
-                .where(SQFirstEntity.firstEntity.id.eq(firstEntityId))
+                //.innerJoin(SQWorker.worker)
+                //.on(SQWorker.worker.companyId.eq(SQCompany.company.id))
+                .where(SQCompany.company.id.eq(companyId))
                 .fetch();
     }
 
     @Override
     @Transactional
-    public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
-        SQAdditionalAttribute typeAttribute = new SQAdditionalAttribute(TYPE_ATTRIBUTE_ALIAS);
-        SQAdditionalAttribute colorAttribute = new SQAdditionalAttribute(COLOR_ATTRIBUTE_ALIAS);
+    public Optional<WorkerAttributes> getWorkerAttributes(long workerId) {
+        SQAdditionalAttribute nameAttribute = new SQAdditionalAttribute(NAME_ATTRIBUTE_ALIAS);
+        SQAdditionalAttribute favouriteColorAttribute = new SQAdditionalAttribute(FAVOURITE_COLOR_ATTRIBUTE_ALIAS);
 
-        SQLQuery<SecondEntityAttributes> query = sqlQueryFactory.select(
-                    //Projections.constructor(SecondEntityAttributes.class, SQSecondEntity.secondEntity.name, typeAttribute.attributeValue, colorAttribute.attributeValue)
-                    new QSecondEntityAttributes(SQSecondEntity.secondEntity.name, typeAttribute.attributeValue, colorAttribute.attributeValue)
+        SQLQuery<WorkerAttributes> query = sqlQueryFactory.select(
+                    //Projections.constructor(WorkerAttributes.class, SQWorker.worker.description, nameAttribute.attributeValue, favouriteColorAttribute.attributeValue)
+                    new QWorkerAttributes(SQWorker.worker.description, nameAttribute.attributeValue, favouriteColorAttribute.attributeValue)
                 )
-                .from(SQSecondEntity.secondEntity)
-                .leftJoin(typeAttribute)
-                .on(typeAttribute.attributeName.eq(TYPE_ATTRIBUTE_NAME).and(typeAttribute.secondEntityId.eq(SQSecondEntity.secondEntity.id)))
-                .leftJoin(colorAttribute)
-                .on(colorAttribute.attributeName.eq(COLOR_ATTRIBUTE_NAME).and(colorAttribute.secondEntityId.eq(SQSecondEntity.secondEntity.id)))
+                .from(SQWorker.worker)
+                .leftJoin(nameAttribute)
+                .on(nameAttribute.attributeName.eq(NAME_ATTRIBUTE_NAME).and(nameAttribute.workerId.eq(SQWorker.worker.id)))
+                .leftJoin(favouriteColorAttribute)
+                .on(favouriteColorAttribute.attributeName.eq(FAVOURITE_COLOR_ATTRIBUTE_NAME).and(favouriteColorAttribute.workerId.eq(SQWorker.worker.id)))
                 //Very weird hack to use literal in query
-                .where(SQSecondEntity.secondEntity.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(secondEntityId))));
+                .where(SQWorker.worker.id.eq(Expressions.numberTemplate(Long.class, String.valueOf(workerId))));
         return findOne(query);
     }
 

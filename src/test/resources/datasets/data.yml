@@ -1,55 +1,55 @@
-FIRST_ENTITY:
-  - DESCRIPTION: "TestDescription1" #1
-  - DESCRIPTION: "TestDescription2" #51
+COMPANY:
+  - NAME: "In Hot Water Company" #1
+  - NAME: "Computer Architecture" #51
 
-SECOND_ENTITY:
-  - FIRST_ENTITY_ID: 1 #101
-    NAME: "TestValue1"
-  - FIRST_ENTITY_ID: 1 #151
-    NAME: "TestValue2"
-  - FIRST_ENTITY_ID: 1 #201
-    NAME: "TestValue2"
-  - FIRST_ENTITY_ID: 51 #251
-    NAME: "TestValue1"
-  - FIRST_ENTITY_ID: 51 #301
-    NAME: "TestValue4"
+WORKER:
+  - COMPANY_ID: 1 #101
+    DESCRIPTION: "Sleepy"
+  - COMPANY_ID: 1 #151
+    DESCRIPTION: "Lazy"
+  - COMPANY_ID: 1 #201
+    DESCRIPTION: "Lazy"
+  - COMPANY_ID: 51 #251
+    DESCRIPTION: "Sleepy"
+  - COMPANY_ID: 51 #301
+    DESCRIPTION: "Hard working"
 
 ADDITIONAL_ATTRIBUTE:
-  - SECOND_ENTITY_ID: 101
-    ATTRIBUTE_NAME: "type"
-    ATTRIBUTE_VALUE: "Type1"
-  - SECOND_ENTITY_ID: 101
-    ATTRIBUTE_NAME: "color"
+  - WORKER_ID: 101
+    ATTRIBUTE_NAME: "name"
+    ATTRIBUTE_VALUE: "John"
+  - WORKER_ID: 101
+    ATTRIBUTE_NAME: "favouriteColor"
     ATTRIBUTE_VALUE: "Red"
-  - SECOND_ENTITY_ID: 151
-    ATTRIBUTE_NAME: "color"
+  - WORKER_ID: 151
+    ATTRIBUTE_NAME: "favouriteColor"
     ATTRIBUTE_VALUE: "Blue"
-  - SECOND_ENTITY_ID: 201
-    ATTRIBUTE_NAME: "color"
+  - WORKER_ID: 201
+    ATTRIBUTE_NAME: "favouriteColor"
     ATTRIBUTE_VALUE: "Blue"
-  - SECOND_ENTITY_ID: 251
-    ATTRIBUTE_NAME: "type"
-    ATTRIBUTE_VALUE: "Type2"
-  - SECOND_ENTITY_ID: 251
-    ATTRIBUTE_NAME: "color"
+  - WORKER_ID: 251
+    ATTRIBUTE_NAME: "name"
+    ATTRIBUTE_VALUE: "Mark"
+  - WORKER_ID: 251
+    ATTRIBUTE_NAME: "favouriteColor"
     ATTRIBUTE_VALUE: "Yellow"
-  - SECOND_ENTITY_ID: 301
-    ATTRIBUTE_NAME: "type"
-    ATTRIBUTE_VALUE: "Type1"
+  - WORKER_ID: 301
+    ATTRIBUTE_NAME: "name"
+    ATTRIBUTE_VALUE: "John"
 
-ANOTHER_ENTITY:
-  - ANIMAL: "Duck"
-    CITY: "Warsaw"
-    IS_OBSOLETE: true
-  - ANIMAL: "Goat"
-    CITY: "Warsaw"
-  - ANIMAL: "Cat"
-    CITY: "Kiev"
-    IS_OBSOLETE: true
-  - ANIMAL: "Dolphin"
-    CITY: "Chicago"
-    IS_OBSOLETE: false
-  - ANIMAL: "Dog"
-    CITY: "Paris"
-  - ANIMAL: "Donkey"
-    CITY: "Berlin"
+ANIMAL:
+  - NAME: "Duck"
+    NATURE: "Relaxed"
+    IS_DANGEROUS: true
+  - NAME: "Goat"
+    NATURE: "Relaxed"
+  - NAME: "Cat"
+    NATURE: "Jolly"
+    IS_DANGEROUS: true
+  - NAME: "Dolphin"
+    NATURE: "Calm"
+    IS_DANGEROUS: false
+  - NAME: "Dog"
+    NATURE: "Modest"
+  - NAME: "Donkey"
+    NATURE: "Brave"

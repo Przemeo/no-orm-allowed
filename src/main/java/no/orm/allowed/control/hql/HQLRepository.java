@@ -6,8 +6,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import no.orm.allowed.control.Repository;
-import no.orm.allowed.entity.jpa.FirstEntity_;
-import no.orm.allowed.entity.jpa.SecondEntityAttributes;
+import no.orm.allowed.entity.jpa.Company_;
+import no.orm.allowed.entity.jpa.WorkerAttributes;
 import org.hibernate.Session;
 
 import java.util.Collection;
@@ -30,17 +30,17 @@ public class HQLRepository implements Repository {
 
     @Override
     @Transactional
-    public List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
-                                                                 long skip,
-                                                                 long limit) {
+    public List<Long> getIsDangerousAndNatureSortedAnimalIds(@Nonnull String namePrefix,
+                                                             long skip,
+                                                             long limit) {
         Session session = entityManager.unwrap(Session.class);
-        String appendedAnimalPrefix = animalPrefix + "%";
+        String appendedNamePrefix = namePrefix + "%";
 
-        return session.createSelectionQuery("SELECT ae.id, ae.isObsolete, ae.city " +
-                        "FROM AnotherEntity ae " +
-                        "WHERE ae.animal LIKE :animalPrefix " +
-                        "ORDER BY ae.isObsolete DESC, ae.city", Tuple.class)
-                .setParameter("animalPrefix", appendedAnimalPrefix)
+        return session.createSelectionQuery("SELECT a.id, a.isDangerous, a.nature " +
+                        "FROM Animal a " +
+                        "WHERE a.name LIKE :namePrefix " +
+                        "ORDER BY a.isDangerous DESC, a.nature", Tuple.class)
+                .setParameter("namePrefix", appendedNamePrefix)
                 .setFirstResult(Long.valueOf(skip).intValue())
                 .setMaxResults(Long.valueOf(limit).intValue())
                 .stream()
@@ -50,23 +50,23 @@ public class HQLRepository implements Repository {
 
     @Override
     @Transactional
-    public List<String> getDistinctSecondEntityNames(long firstEntityId) {
+    public List<String> getDistinctWorkerDescriptions(long companyId) {
         Session session = entityManager.unwrap(Session.class);
 
-        //Can also be written as: SELECT DISTINCT se.name FROM FirstEntity fe INNER JOIN SecondEntity se ON fk(se.firstEntity) = fe.id WHERE fe.id = (:id)
-        return FirstEntity_.getDistinctSecondEntityNames(session, firstEntityId);
+        //Can also be written as: SELECT DISTINCT w.description FROM Company c INNER JOIN Worker w ON fk(w.company) = c.id WHERE c.id = (:id)
+        return Company_.getDistinctWorkerDescriptions(session, companyId);
     }
 
     @Override
     @Transactional
-    public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
+    public Optional<WorkerAttributes> getWorkerAttributes(long workerId) {
         Session session = entityManager.unwrap(Session.class);
 
-        return session.createSelectionQuery("SELECT new no.orm.allowed.entity.jpa.SecondEntityAttributes(se.name, typeAttribute.attributeValue, colorAttribute.attributeValue) " +
-                        "FROM SecondEntity se " +
-                        "LEFT OUTER JOIN se.typeAttribute typeAttribute " +
-                        "LEFT OUTER JOIN se.colorAttribute colorAttribute " +
-                        "WHERE se.id = " + secondEntityId, SecondEntityAttributes.class)
+        return session.createSelectionQuery("SELECT new no.orm.allowed.entity.jpa.WorkerAttributes(w.description, nameAttribute.attributeValue, favouriteColorAttribute.attributeValue) " +
+                        "FROM Worker w " +
+                        "LEFT OUTER JOIN w.nameAttribute nameAttribute " +
+                        "LEFT OUTER JOIN w.favouriteColorAttribute favouriteColorAttribute " +
+                        "WHERE w.id = " + workerId, WorkerAttributes.class)
                 //Limit related to the use of uniqueResultOptional method
                 .setMaxResults(LIMIT_VALUE)
                 .uniqueResultOptional();

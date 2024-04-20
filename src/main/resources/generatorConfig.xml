@@ -11,9 +11,9 @@
         <javaModelGenerator targetPackage="no.orm.allowed.mybatis.model" targetProject="MAVEN"/>
         <javaClientGenerator targetPackage="no.orm.allowed.mybatis.mapper" targetProject="MAVEN"/>
 
-        <table schema="public" tableName="first_entity"/>
-        <table schema="public" tableName="second_entity"/>
+        <table schema="public" tableName="company"/>
+        <table schema="public" tableName="worker"/>
         <table schema="public" tableName="additional_attribute"/>
-        <table schema="public" tableName="another_entity"/>
+        <table schema="public" tableName="animal"/>
     </context>
 </generatorConfiguration>

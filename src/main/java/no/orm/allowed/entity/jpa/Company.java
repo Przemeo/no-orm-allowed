@@ -10,34 +10,34 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "FIRST_ENTITY")
-@NamedQuery(name = "#getDistinctSecondEntityNames",
-        query = "SELECT DISTINCT se.name FROM FirstEntity fe INNER JOIN fe.secondEntities se WHERE fe.id = (:id)")
-public class FirstEntity extends DatabaseId {
+@Table(name = "COMPANY")
+@NamedQuery(name = "#getDistinctWorkerDescriptions",
+        query = "SELECT DISTINCT ws.description FROM Company c INNER JOIN c.workers ws WHERE c.id = (:id)")
+public class Company extends DatabaseId {
 
-    @OneToMany(mappedBy = SecondEntity_.FIRST_ENTITY)
-    private Set<SecondEntity> secondEntities = new LinkedHashSet<>();
+    @OneToMany(mappedBy = Worker_.COMPANY)
+    private Set<Worker> workers = new LinkedHashSet<>();
 
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Column(name = "NAME", unique = true, nullable = false)
+    private String name;
 
     @Override
     public Long getId() {
         return id;
     }
 
-    public Set<SecondEntity> getSecondEntities() {
-        return secondEntities;
+    public Set<Worker> getWorkers() {
+        return workers;
     }
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FirstEntity other))
+        if (!(o instanceof Company other))
             return false;
 
         return id != null &&

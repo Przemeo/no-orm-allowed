@@ -8,14 +8,14 @@ import java.io.Serializable;
 @Embeddable
 public class AdditionalAttributeKey implements Serializable {
 
-    @Column(name = "SECOND_ENTITY_ID", nullable = false, updatable = false)
-    private Long secondEntityId;
+    @Column(name = "WORKER_ID", nullable = false, updatable = false)
+    private Long workerId;
 
     @Column(name = "ATTRIBUTE_NAME", nullable = false, updatable = false)
     private String attributeName;
 
-    public Long getSecondEntityId() {
-        return secondEntityId;
+    public Long getWorkerId() {
+        return workerId;
     }
 
     public String getAttributeName() {
@@ -28,7 +28,7 @@ public class AdditionalAttributeKey implements Serializable {
         if (!(o instanceof AdditionalAttributeKey other))
             return false;
 
-        return secondEntityId.equals(other.secondEntityId) &&
+        return workerId.equals(other.workerId) &&
                 attributeName.equals(other.attributeName);
     }
 

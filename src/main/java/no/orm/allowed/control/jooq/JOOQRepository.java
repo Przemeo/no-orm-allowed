@@ -5,11 +5,11 @@ import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import no.orm.allowed.control.Repository;
-import no.orm.allowed.entity.jpa.SecondEntityAttributes;
+import no.orm.allowed.entity.jpa.WorkerAttributes;
 import no.orm.allowed.jooq.tables.AdditionalAttribute;
-import no.orm.allowed.jooq.tables.AnotherEntity;
-import no.orm.allowed.jooq.tables.FirstEntity;
-import no.orm.allowed.jooq.tables.SecondEntity;
+import no.orm.allowed.jooq.tables.Animal;
+import no.orm.allowed.jooq.tables.Company;
+import no.orm.allowed.jooq.tables.Worker;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
@@ -26,10 +26,10 @@ public class JOOQRepository implements Repository {
 
     private static final int LIMIT_VALUE = 2;
 
-    private static final String TYPE_ATTRIBUTE_ALIAS = "typeAttribute";
-    private static final String COLOR_ATTRIBUTE_ALIAS = "colorAttribute";
-    private static final String TYPE_ATTRIBUTE_NAME = "type";
-    private static final String COLOR_ATTRIBUTE_NAME = "color";
+    private static final String NAME_ATTRIBUTE_ALIAS = "nameAttribute";
+    private static final String FAVOURITE_COLOR_ATTRIBUTE_ALIAS = "favouriteColorAttribute";
+    private static final String NAME_ATTRIBUTE_NAME = "name";
+    private static final String FAVOURITE_COLOR_ATTRIBUTE_NAME = "favouriteColor";
     private static final String DISTINCT_ATTRIBUTE_NAME_ATTRIBUTE_VALUE_TABLE_ALIAS = "distinctAttributeNameAttributeValue";
 
     private final DSLContext dslContext;
@@ -41,45 +41,45 @@ public class JOOQRepository implements Repository {
 
     @Override
     @Transactional
-    public List<Long> getIsObsoleteAndCitySortedAnotherEntityIds(@Nonnull String animalPrefix,
-                                                                 long skip,
-                                                                 long limit) {
-        return dslContext.selectDistinct(AnotherEntity.ANOTHER_ENTITY.ID, AnotherEntity.ANOTHER_ENTITY.IS_OBSOLETE, AnotherEntity.ANOTHER_ENTITY.CITY)
-                .from(AnotherEntity.ANOTHER_ENTITY)
-                .where(AnotherEntity.ANOTHER_ENTITY.ANIMAL.startsWith(animalPrefix))
-                .orderBy(AnotherEntity.ANOTHER_ENTITY.IS_OBSOLETE.desc(), AnotherEntity.ANOTHER_ENTITY.CITY)
+    public List<Long> getIsDangerousAndNatureSortedAnimalIds(@Nonnull String namePrefix,
+                                                             long skip,
+                                                             long limit) {
+        return dslContext.selectDistinct(Animal.ANIMAL.ID, Animal.ANIMAL.IS_DANGEROUS, Animal.ANIMAL.NATURE)
+                .from(Animal.ANIMAL)
+                .where(Animal.ANIMAL.NAME.startsWith(namePrefix))
+                .orderBy(Animal.ANIMAL.IS_DANGEROUS.desc(), Animal.ANIMAL.NATURE)
                 .offset(skip)
                 .limit(limit)
-                .fetch(AnotherEntity.ANOTHER_ENTITY.ID);
+                .fetch(Animal.ANIMAL.ID);
     }
 
     @Override
     @Transactional
-    public List<String> getDistinctSecondEntityNames(long firstEntityId) {
-        return dslContext.selectDistinct(SecondEntity.SECOND_ENTITY.NAME)
-                .from(FirstEntity.FIRST_ENTITY)
-                .innerJoin(SecondEntity.SECOND_ENTITY)
-                .on(SecondEntity.SECOND_ENTITY.FIRST_ENTITY_ID.eq(FirstEntity.FIRST_ENTITY.ID))
-                .where(FirstEntity.FIRST_ENTITY.ID.eq(DSL.inline(firstEntityId)))
-                .fetch(SecondEntity.SECOND_ENTITY.NAME);
+    public List<String> getDistinctWorkerDescriptions(long companyId) {
+        return dslContext.selectDistinct(Worker.WORKER.DESCRIPTION)
+                .from(Company.COMPANY)
+                .innerJoin(Worker.WORKER)
+                .on(Worker.WORKER.COMPANY_ID.eq(Company.COMPANY.ID))
+                .where(Company.COMPANY.ID.eq(DSL.inline(companyId)))
+                .fetch(Worker.WORKER.DESCRIPTION);
     }
 
     @Override
     @Transactional
-    public Optional<SecondEntityAttributes> getSecondEntityAttributes(long secondEntityId) {
-        AdditionalAttribute typeAttribute = AdditionalAttribute.ADDITIONAL_ATTRIBUTE.as(TYPE_ATTRIBUTE_ALIAS);
-        AdditionalAttribute colorAttribute = AdditionalAttribute.ADDITIONAL_ATTRIBUTE.as(COLOR_ATTRIBUTE_ALIAS);
+    public Optional<WorkerAttributes> getWorkerAttributes(long workerId) {
+        AdditionalAttribute nameAttribute = AdditionalAttribute.ADDITIONAL_ATTRIBUTE.as(NAME_ATTRIBUTE_ALIAS);
+        AdditionalAttribute favouriteColorAttribute = AdditionalAttribute.ADDITIONAL_ATTRIBUTE.as(FAVOURITE_COLOR_ATTRIBUTE_ALIAS);
 
-        return dslContext.select(SecondEntity.SECOND_ENTITY.NAME, typeAttribute.ATTRIBUTE_VALUE, colorAttribute.ATTRIBUTE_VALUE)
-                .from(SecondEntity.SECOND_ENTITY)
-                .leftJoin(typeAttribute)
-                .on(typeAttribute.ATTRIBUTE_NAME.eq(TYPE_ATTRIBUTE_NAME).and(typeAttribute.SECOND_ENTITY_ID.eq(SecondEntity.SECOND_ENTITY.ID)))
-                .leftJoin(colorAttribute)
-                .on(colorAttribute.ATTRIBUTE_NAME.eq(COLOR_ATTRIBUTE_NAME).and(colorAttribute.SECOND_ENTITY_ID.eq(SecondEntity.SECOND_ENTITY.ID)))
-                .where(SecondEntity.SECOND_ENTITY.ID.eq(secondEntityId))
+        return dslContext.select(Worker.WORKER.DESCRIPTION, nameAttribute.ATTRIBUTE_VALUE, favouriteColorAttribute.ATTRIBUTE_VALUE)
+                .from(Worker.WORKER)
+                .leftJoin(nameAttribute)
+                .on(nameAttribute.ATTRIBUTE_NAME.eq(NAME_ATTRIBUTE_NAME).and(nameAttribute.WORKER_ID.eq(Worker.WORKER.ID)))
+                .leftJoin(favouriteColorAttribute)
+                .on(favouriteColorAttribute.ATTRIBUTE_NAME.eq(FAVOURITE_COLOR_ATTRIBUTE_NAME).and(favouriteColorAttribute.WORKER_ID.eq(Worker.WORKER.ID)))
+                .where(Worker.WORKER.ID.eq(workerId))
                 //Limit related to the use of fetchOptionalInto method
                 .limit(LIMIT_VALUE)
-                .fetchOptionalInto(SecondEntityAttributes.class);
+                .fetchOptionalInto(WorkerAttributes.class);
     }
 
     @Override

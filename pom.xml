@@ -172,7 +172,6 @@
             <groupId>p6spy</groupId>
             <artifactId>p6spy</artifactId>
             <version>${p6spy.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.database-rider</groupId>
@@ -401,7 +400,7 @@
                     <jdbcUrl>${db.url}</jdbcUrl>
                     <jdbcUser>${db.username}</jdbcUser>
                     <jdbcPassword>${db.password}</jdbcPassword>
-                    <tableNamePattern>first_entity,second_entity,additional_attribute,another_entity</tableNamePattern>
+                    <tableNamePattern>company,worker,additional_attribute,animal</tableNamePattern>
                     <packageName>no.orm.allowed.entity.sql</packageName>
                     <targetFolder>${project.basedir}/target/generated-sources/querydsl/sql</targetFolder>
                     <namePrefix>SQ</namePrefix>
