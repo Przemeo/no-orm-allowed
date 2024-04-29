@@ -24,7 +24,7 @@
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-        <testcontainers-jooq-codegen-maven-plugin.version>0.0.3</testcontainers-jooq-codegen-maven-plugin.version>
+        <testcontainers-jooq-codegen-maven-plugin.version>0.0.4</testcontainers-jooq-codegen-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <mybatis-generator-maven-plugin.version>1.4.2</mybatis-generator-maven-plugin.version>
 
