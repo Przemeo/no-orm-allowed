@@ -32,7 +32,7 @@
         <db.password>admin</db.password>
 
         <quarkus-jooq.version>2.0.1</quarkus-jooq.version>
-        <jooq.version>3.19.7</jooq.version>
+        <jooq.version>3.19.8</jooq.version>
         <quarkus-jdbi.version>1.4.0</quarkus-jdbi.version>
         <jdbi.version>3.45.1</jdbi.version>
         <querydsl.version>6.2.1</querydsl.version>
