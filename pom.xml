@@ -38,7 +38,7 @@
         <querydsl.version>6.3</querydsl.version>
         <blaze-persistence.version>1.6.11</blaze-persistence.version>
         <quarkus-mybatis.version>2.2.2</quarkus-mybatis.version>
-        <mybatis-dynamic-sql.version>1.5.1</mybatis-dynamic-sql.version>
+        <mybatis-dynamic-sql.version>1.5.2</mybatis-dynamic-sql.version>
 
         <testcontainers.version>1.19.8</testcontainers.version>
         <guava.version>33.2.1-jre</guava.version>
