@@ -9,5 +9,5 @@ def container = new PostgreSQLContainer<>("postgres:latest")
 container.start()
 
 project.properties.setProperty('db.url', container.getJdbcUrl())
-project.properties.setProperty('testcontainer.containerid', container.getContainerId())
+project.properties.setProperty('testcontainer.containerId', container.getContainerId())
 project.properties.setProperty('testcontainer.imageName', container.getDockerImageName())

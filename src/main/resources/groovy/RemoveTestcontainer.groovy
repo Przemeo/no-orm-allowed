@@ -2,7 +2,7 @@ package groovy
 
 import org.testcontainers.utility.ResourceReaper
 
-String containerId = project.properties.getProperty("testcontainer.containerid")
+String containerId = project.properties.getProperty("testcontainer.containerId")
 String imageName = project.properties.getProperty("testcontainer.imageName")
 
 log.info("Stopping Testcontainer: $containerId - $imageName")

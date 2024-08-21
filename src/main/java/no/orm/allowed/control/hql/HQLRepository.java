@@ -36,10 +36,12 @@ public class HQLRepository implements Repository {
         Session session = entityManager.unwrap(Session.class);
         String appendedNamePrefix = namePrefix + "%";
 
-        return session.createSelectionQuery("SELECT a.id, a.isDangerous, a.nature " +
-                        "FROM Animal a " +
-                        "WHERE a.name LIKE :namePrefix " +
-                        "ORDER BY a.isDangerous DESC, a.nature", Tuple.class)
+        return session.createSelectionQuery("""
+                        SELECT a.id, a.isDangerous, a.nature
+                        FROM Animal a
+                        WHERE a.name LIKE :namePrefix
+                        ORDER BY a.isDangerous DESC, a.nature
+                        """, Tuple.class)
                 .setParameter("namePrefix", appendedNamePrefix)
                 .setFirstResult(Long.valueOf(skip).intValue())
                 .setMaxResults(Long.valueOf(limit).intValue())
@@ -62,11 +64,13 @@ public class HQLRepository implements Repository {
     public Optional<WorkerAttributes> getWorkerAttributes(long workerId) {
         Session session = entityManager.unwrap(Session.class);
 
-        return session.createSelectionQuery("SELECT new no.orm.allowed.entity.jpa.WorkerAttributes(w.description, nameAttribute.attributeValue, favouriteColorAttribute.attributeValue) " +
-                        "FROM Worker w " +
-                        "LEFT OUTER JOIN w.nameAttribute nameAttribute " +
-                        "LEFT OUTER JOIN w.favouriteColorAttribute favouriteColorAttribute " +
-                        "WHERE w.id = " + workerId, WorkerAttributes.class)
+        return session.createSelectionQuery("""
+                        SELECT new no.orm.allowed.entity.jpa.WorkerAttributes(w.description, nameAttribute.attributeValue, favouriteColorAttribute.attributeValue)
+                        FROM Worker w
+                        LEFT OUTER JOIN w.nameAttribute nameAttribute
+                        LEFT OUTER JOIN w.favouriteColorAttribute favouriteColorAttribute
+                        WHERE w.id = %d
+                        """.formatted(workerId), WorkerAttributes.class)
                 //Limit related to the use of uniqueResultOptional method
                 .setMaxResults(LIMIT_VALUE)
                 .uniqueResultOptional();
@@ -77,11 +81,13 @@ public class HQLRepository implements Repository {
     public long getDistinctAttributeValuesCount(@Nonnull Collection<String> attributeNames) {
         Session session = entityManager.unwrap(Session.class);
 
-        return session.createSelectionQuery("SELECT COUNT(distinctAttributeNameAttributeValue.attributeName) " +
-                        "FROM (SELECT DISTINCT aa.key.attributeName attributeName, aa.attributeValue attributeValue " +
-                        "FROM AdditionalAttribute aa " +
-                        //Partitioning attributeNames would require manual String manipulation with HQL building
-                        "WHERE aa.key.attributeName IN :attributeNames) distinctAttributeNameAttributeValue", Long.class)
+        //Partitioning attributeNames would require manual String manipulation with HQL building
+        return session.createSelectionQuery("""
+                        SELECT COUNT(distinctAttributeNameAttributeValue.attributeName)
+                        FROM (SELECT DISTINCT aa.key.attributeName attributeName, aa.attributeValue attributeValue
+                        FROM AdditionalAttribute aa
+                        WHERE aa.key.attributeName IN :attributeNames) distinctAttributeNameAttributeValue
+                        """, Long.class)
                 .setParameterList("attributeNames", attributeNames)
                 .getSingleResult();
     }
@@ -91,11 +97,13 @@ public class HQLRepository implements Repository {
     public Map<String, Long> getDistinctAttributeValuesCountByAttributeName(@Nonnull Collection<String> attributeNames) {
         Session session = entityManager.unwrap(Session.class);
 
-        return session.createSelectionQuery("SELECT new map(aa.key.attributeName, COUNT(DISTINCT aa.attributeValue)) " +
-                        "FROM AdditionalAttribute aa " +
-                        //Partitioning attributeNames would require manual String manipulation with HQL building
-                        "WHERE aa.key.attributeName IN :attributeNames " +
-                        "GROUP BY aa.key.attributeName", Map.class)
+        //Partitioning attributeNames would require manual String manipulation with HQL building
+        return session.createSelectionQuery("""
+                        SELECT new map(aa.key.attributeName, COUNT(DISTINCT aa.attributeValue))
+                        FROM AdditionalAttribute aa
+                        WHERE aa.key.attributeName IN :attributeNames
+                        GROUP BY aa.key.attributeName
+                        """, Map.class)
                 .setParameterList("attributeNames", attributeNames)
                 .stream()
                 .collect(Collectors.toMap(
