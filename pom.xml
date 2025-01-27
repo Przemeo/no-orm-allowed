@@ -43,7 +43,7 @@
         <postgresql.version>42.7.4</postgresql.version>
         <p6spy.version>3.9.1</p6spy.version>
         <database-rider.version>1.44.0</database-rider.version>
-        <assertj.version>3.27.2</assertj.version>
+        <assertj.version>3.27.3</assertj.version>
     </properties>
 
     <dependencyManagement>
