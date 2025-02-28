@@ -38,7 +38,7 @@
         <quarkus-mybatis.version>2.2.4</quarkus-mybatis.version>
         <mybatis-dynamic-sql.version>1.5.2</mybatis-dynamic-sql.version>
 
-        <testcontainers.version>1.20.4</testcontainers.version>
+        <testcontainers.version>1.20.5</testcontainers.version>
         <guava.version>33.4.0-jre</guava.version>
         <postgresql.version>42.7.4</postgresql.version>
         <p6spy.version>3.9.1</p6spy.version>
