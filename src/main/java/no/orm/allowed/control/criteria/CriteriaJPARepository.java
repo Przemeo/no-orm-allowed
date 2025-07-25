@@ -11,6 +11,7 @@ import no.orm.allowed.entity.jpa.*;
 import org.hibernate.Session;
 import org.hibernate.graph.GraphSemantic;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.hibernate.query.criteria.JpaCompoundSelection;
 import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.hibernate.query.criteria.JpaSubQuery;
 
@@ -47,7 +48,8 @@ public class CriteriaJPARepository implements Repository {
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
         Root<Animal> root = query.from(Animal.class);
 
-        query.multiselect(root.get(Animal_.id), root.get(Animal_.isDangerous), root.get(Animal_.nature))
+        JpaCompoundSelection<Tuple> selection = builder.tuple(root.get(Animal_.id), root.get(Animal_.isDangerous), root.get(Animal_.nature));
+        query.select(selection)
                 .where(builder.like(root.get(Animal_.name), namePrefix + "%"))
                 .orderBy(builder.desc(root.get(Animal_.isDangerous)), builder.asc(root.get(Animal_.nature)));
 
@@ -152,8 +154,9 @@ public class CriteriaJPARepository implements Repository {
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
         Root<AdditionalAttribute> root = query.from(AdditionalAttribute.class);
 
-        query.multiselect(root.get(AdditionalAttribute_.key).get(AdditionalAttributeKey_.attributeName).alias(ATTRIBUTE_NAME_ALIAS),
-                        builder.countDistinct(root.get(AdditionalAttribute_.attributeValue)).alias(COUNT_ALIAS))
+        CompoundSelection<Tuple> selection = builder.tuple(root.get(AdditionalAttribute_.key).get(AdditionalAttributeKey_.attributeName).alias(ATTRIBUTE_NAME_ALIAS),
+                builder.countDistinct(root.get(AdditionalAttribute_.attributeValue)).alias(COUNT_ALIAS));
+        query.select(selection)
                 .where(getAttributeNamesInPartitionedPredicate(attributeNames, root))
                 .groupBy(root.get(AdditionalAttribute_.key).get(AdditionalAttributeKey_.attributeName));
 
