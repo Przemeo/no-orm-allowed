@@ -67,7 +67,7 @@ public class CriteriaJPARepository implements Repository {
     public List<String> getDistinctWorkerDescriptions(long companyId) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         EntityGraph<Company> entityGraph = entityManager.createEntityGraph(Company.class);
-        entityGraph.addSubgraph(Company_.workers);
+        entityGraph.addElementSubgraph(Company_.workers);
 
         CriteriaQuery<String> query = builder.createQuery(String.class);
         Root<Company> root = query.from(Company.class);
