@@ -6,7 +6,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import no.orm.allowed.control.Repository;
-import no.orm.allowed.entity.jpa.Company_;
 import no.orm.allowed.entity.jpa.WorkerAttributes;
 import org.hibernate.Session;
 
@@ -56,7 +55,7 @@ public class HQLRepository implements Repository {
         Session session = entityManager.unwrap(Session.class);
 
         //Can also be written as: SELECT DISTINCT w.description FROM Company c INNER JOIN Worker w ON fk(w.company) = c.id WHERE c.id = (:id)
-        return Company_.getDistinctWorkerDescriptions(session, companyId);
+        return HQLQueries_.getDistinctWorkerDescriptions(session, companyId);
     }
 
     @Override

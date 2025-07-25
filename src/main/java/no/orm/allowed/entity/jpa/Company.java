@@ -4,15 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.NamedQuery;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "COMPANY")
-@NamedQuery(name = "#getDistinctWorkerDescriptions",
-        query = "SELECT DISTINCT ws.description FROM Company c INNER JOIN c.workers ws WHERE c.id = (:id)")
 public class Company extends DatabaseId {
 
     @OneToMany(mappedBy = Worker_.COMPANY)
