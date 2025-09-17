@@ -31,7 +31,7 @@
 
         <quarkus-jooq.version>2.1.0</quarkus-jooq.version>
         <jooq.version>3.20.5</jooq.version>
-        <quarkus-jdbi.version>1.7.5</quarkus-jdbi.version>
+        <quarkus-jdbi.version>1.8.0</quarkus-jdbi.version>
         <jdbi.version>3.49.5</jdbi.version>
         <querydsl.version>7.0</querydsl.version>
         <blaze-persistence.version>1.6.16</blaze-persistence.version>
