@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static no.orm.allowed.control.querydsl.QueryDSLUtils.getAttributeNamesInPartitionedExpression;
 
@@ -55,7 +54,7 @@ public class QueryDSLJPARepository implements Repository {
                 .limit(limit)
                 .stream()
                 .map(tuple -> tuple.get(QAnimal.animal.id))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

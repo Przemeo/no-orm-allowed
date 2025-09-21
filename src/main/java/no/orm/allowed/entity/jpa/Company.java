@@ -21,11 +21,6 @@ public class Company extends DatabaseId {
     @Column(name = "NAME", unique = true, nullable = false)
     private String name;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
     public Set<Worker> getWorkers() {
         return workers;
     }

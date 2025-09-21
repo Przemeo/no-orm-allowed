@@ -47,17 +47,17 @@ public class CriteriaJPARepository implements Repository {
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
         Root<Animal> root = query.from(Animal.class);
 
-        query.multiselect(root.get(Animal_.id), root.get(Animal_.isDangerous), root.get(Animal_.nature))
+        query.multiselect(root.get(DatabaseId_.id), root.get(Animal_.isDangerous), root.get(Animal_.nature))
                 .where(builder.like(root.get(Animal_.name), namePrefix + "%"))
                 .orderBy(builder.desc(root.get(Animal_.isDangerous)), builder.asc(root.get(Animal_.nature)));
 
         return session.createQuery(query)
-                .setFirstResult(Long.valueOf(skip).intValue())
-                .setMaxResults(Long.valueOf(limit).intValue())
+                .setFirstResult((int) skip)
+                .setMaxResults((int) limit)
                 .setTupleTransformer((tuple, aliases) ->
                         ((Number) tuple[0]).longValue())
                 .getResultStream()
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class CriteriaJPARepository implements Repository {
         Root<Company> root = query.from(Company.class);
 
         query.select(root.join(Company_.workers, JoinType.INNER).get(Worker_.description))
-                .where(builder.equal(root.get(Company_.id), companyId))
+                .where(builder.equal(root.get(DatabaseId_.id), companyId))
                 .distinct(true);
 
         return entityManager.createQuery(query)
@@ -92,7 +92,7 @@ public class CriteriaJPARepository implements Repository {
                 root.join(Worker_.nameAttribute, JoinType.LEFT).get(AdditionalAttribute_.attributeValue),
                 root.join(Worker_.favouriteColorAttribute, JoinType.LEFT).get(AdditionalAttribute_.attributeValue));
         query.select(selection)
-                .where(builder.equal(root.get(Worker_.id), builder.literal(workerId)));
+                .where(builder.equal(root.get(DatabaseId_.id), builder.literal(workerId)));
 
         return findSingleResult(entityManager.createQuery(query));
     }

@@ -25,11 +25,6 @@ public class Worker extends DatabaseId {
     @JoinColumnOrFormula(formula = @JoinFormula(value = "'favouriteColor'", referencedColumnName = "ATTRIBUTE_NAME"))
     private AdditionalAttribute favouriteColorAttribute;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
     public Company getCompany() {
         return company;
     }

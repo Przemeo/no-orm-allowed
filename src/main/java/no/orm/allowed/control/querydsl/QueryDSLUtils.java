@@ -27,7 +27,7 @@ class QueryDSLUtils {
                         expressions -> {
                             //Workaround: Expressions.predicate throws IndexOutOfBoundsException when the attributeNames have one or no values
                             if (expressions.size() == 1) {
-                                return expressions.get(0);
+                                return expressions.getFirst();
                             } else if (expressions.size() > 1) {
                                 return Expressions.predicate(Ops.OR, expressions.toArray(new Expression[0]));
                             }
