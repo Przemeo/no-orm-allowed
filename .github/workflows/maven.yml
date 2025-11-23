@@ -10,9 +10,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "quarkus-hibernate-7" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "quarkus-hibernate-7" ]
 
 jobs:
   build:
