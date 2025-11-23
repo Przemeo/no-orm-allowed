@@ -61,7 +61,7 @@ public class QueryDSLJPARepository implements Repository {
     @Transactional
     public List<String> getDistinctWorkerDescriptions(long companyId) {
         EntityGraph<Company> entityGraph = entityManager.createEntityGraph(Company.class);
-        entityGraph.addSubgraph(Company_.workers);
+        entityGraph.addElementSubgraph(Company_.workers);
 
         return jpaQueryFactory.select(QWorker.worker.description)
                 .distinct()
